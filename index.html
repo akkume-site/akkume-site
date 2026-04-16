@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akkume</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #2f3437;
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    .hero {
+      padding: 70px 0 40px;
+    }
+    .logo {
+      font-size: 16px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #f28c28;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 52px;
+      line-height: 1.05;
+      margin: 0 0 20px;
+      max-width: 800px;
+    }
+    .sub {
+      font-size: 22px;
+      color: #4b5560;
+      max-width: 760px;
+      margin-bottom: 32px;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 14px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #ff9a3d, #f26a21);
+      color: white;
+    }
+    .btn-secondary {
+      border: 1px solid #d9dde1;
+      color: #2f3437;
+      background: #fff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .card {
+      background: #fafafa;
+      border: 1px solid #ececec;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+    .bullets {
+      padding-left: 18px;
+    }
+    .bullets li {
+      margin-bottom: 12px;
+    }
+    form {
+      display: grid;
+      gap: 12px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid #d9dde1;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .small {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .section {
+      padding-top: 52px;
+    }
+    .stakeholders {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    .stakeholders .card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    footer {
+      padding-top: 50px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    @media (max-width: 800px) {
+      h1 {
+        font-size: 38px;
+      }
+      .sub {
+        font-size: 19px;
+      }
+      .grid, .stakeholders {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="logo">Akkume</div>
+      <h1>Upgrade the mortgage system with a reserve layer.</h1>
+      <p class="sub">
+        Introducing Bitcoin as a long-duration reserve layer for housing finance:
+        a pilot proposal to improve credit resilience, reduce loss severity, and lower taxpayer exposure.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#support">Support the Pilot</a>
+        <a class="btn btn-secondary" href="#stakeholders">Who It Helps</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>The proposal</h2>
+        <p>
+          Akkume proposes a pilot that introduces a fixed-supply digital asset reserve layer into mortgage finance.
+          The goal is not speculation. The goal is stronger credit structure, better alignment across the stack,
+          and a more resilient housing finance system.
+        </p>
+        <ul class="bullets">
+          <li>Support a pilot for reserve-layer mortgage enhancement</li>
+          <li>Build support for rule and standards changes</li>
+          <li>Create a coalition of borrowers, lenders, investors, servicers, and regulators</li>
+        </ul>
+      </div>
+
+      <div class="card" id="support">
+        <h2>Support the Pilot</h2>
+        <form>
+          <input type="text" placeholder="Full name" />
+          <input type="text" placeholder="Company or organization" />
+          <input type="email" placeholder="Email" />
+          <input type="tel" placeholder="Phone number" />
+          <select>
+            <option>Select your role</option>
+            <option>Borrower</option>
+            <option>Lender</option>
+            <option>Investor</option>
+            <option>Servicer</option>
+            <option>Regulator</option>
+            <option>Other</option>
+          </select>
+          <select>
+            <option>Support visibility</option>
+            <option>List me publicly as a supporter</option>
+            <option>Keep me private, count me in totals</option>
+          </select>
+          <select>
+            <option>How would you like to help?</option>
+            <option>Join the push actively</option>
+            <option>Pledge resources</option>
+            <option>Learn more first</option>
+          </select>
+          <textarea placeholder="How would you like to support or contribute?"></textarea>
+          <button class="btn btn-primary" type="button">Submit Support</button>
+        </form>
+        <p class="small" style="margin-top:12px;">
+          Form storage and login can be connected next using Supabase or another backend.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="stakeholders">
+      <h2>Who this is for</h2>
+      <div class="stakeholders">
+        <div class="card">
+          <h3>Borrowers</h3>
+          <p>Potential for a more resilient mortgage structure and stronger long-term household balance sheets.</p>
+        </div>
+        <div class="card">
+          <h3>Lenders</h3>
+          <p>Improved credit enhancement and reduced loss severity through a reserve-based design.</p>
+        </div>
+        <div class="card">
+          <h3>Investors</h3>
+          <p>A more durable structure for mortgage credit with better alignment across market participants.</p>
+        </div>
+        <div class="card">
+          <h3>Servicers & Regulators</h3>
+          <p>Better workout outcomes, clearer risk visibility, and a path toward reduced taxpayer burden.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Akkume.com — reserve-layer infrastructure for next-generation housing finance.
+    </footer>
+  </div>
+</body>
+</html>
