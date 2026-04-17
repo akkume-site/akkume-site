@@ -4,228 +4,835 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Akkume</title>
+  <meta name="description" content="Akkume introduces Bitcoin as a reserve layer for housing finance." />
   <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1f2933;
+      --muted: #5f6b76;
+      --line: #e8ebef;
+      --card: #fafbfc;
+      --orange: #f58a1f;
+      --orange-2: #ffb14d;
+      --dark: #111827;
+      --success: #177245;
+      --shadow: 0 18px 40px rgba(17, 24, 39, 0.07);
+      --radius: 22px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #ffffff;
-      color: #2f3437;
-      line-height: 1.5;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.45;
     }
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 20px 80px;
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .shell { width: min(100% - 32px, var(--max)); margin: 0 auto; }
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,.88);
+      border-bottom: 1px solid rgba(232,235,239,.9);
     }
-    .hero {
-      padding: 70px 0 40px;
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      min-height: 76px; gap: 18px;
     }
-    .logo {
-      font-size: 16px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #f28c28;
-      font-weight: 700;
-      margin-bottom: 18px;
+    .brand { display: flex; align-items: center; gap: 14px; font-weight: 800; letter-spacing: .01em; }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange-2), var(--orange));
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .brand-mark::before, .brand-mark::after {
+      content: ""; position: absolute; inset: 8px; border: 2px solid rgba(255,255,255,.95); border-radius: 8px;
+    }
+    .brand-mark::after { inset: 13px; border-radius: 4px; }
+    .nav-links {
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 14px;
+    }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border: 1px solid transparent; border-radius: 999px; padding: 13px 18px; font-weight: 700;
+      cursor: pointer; transition: .2s ease; font-size: 14px;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--orange), #f36c14);
+      color: #fff; box-shadow: 0 14px 30px rgba(245,138,31,.25);
+    }
+    .btn-secondary { background: #fff; border-color: var(--line); color: var(--text); }
+    .btn-ghost { background: transparent; border-color: transparent; color: var(--muted); }
+
+    .hero { padding: 68px 0 34px; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: stretch;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px;
+      border-radius: 999px; background: #fff4e7; color: #b85d00; font-size: 12px; font-weight: 700;
+      letter-spacing: .02em; margin-bottom: 18px;
     }
     h1 {
-      font-size: 52px;
-      line-height: 1.05;
-      margin: 0 0 20px;
-      max-width: 800px;
-    }
-    .sub {
-      font-size: 22px;
-      color: #4b5560;
+      margin: 0 0 16px; font-size: clamp(40px, 6vw, 74px); line-height: .98; letter-spacing: -.03em;
       max-width: 760px;
-      margin-bottom: 32px;
     }
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 48px;
+    .hero p.lead {
+      margin: 0 0 24px; color: var(--muted); font-size: clamp(18px, 2vw, 22px); max-width: 730px;
     }
-    .btn {
-      display: inline-block;
-      padding: 14px 22px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 700;
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 26px; }
+    .hero-meta {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 28px;
     }
-    .btn-primary {
-      background: linear-gradient(90deg, #ff9a3d, #f26a21);
-      color: white;
+    .metric {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow);
     }
-    .btn-secondary {
-      border: 1px solid #d9dde1;
-      color: #2f3437;
-      background: #fff;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 28px;
-      align-items: start;
-    }
+    .metric .kicker { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .metric strong { display: block; margin-top: 10px; font-size: 28px; }
+
     .card {
-      background: #fafafa;
-      border: 1px solid #ececec;
-      border-radius: 22px;
-      padding: 28px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow);
     }
-    .card h2 {
-      margin-top: 0;
-      font-size: 28px;
+    .gradient-card {
+      background: linear-gradient(180deg, rgba(255,245,235,1), rgba(255,255,255,1));
     }
-    .bullets {
-      padding-left: 18px;
-    }
-    .bullets li {
-      margin-bottom: 12px;
-    }
-    form {
-      display: grid;
-      gap: 12px;
-    }
+    .support-card h2, .section-head h2 { margin: 0 0 10px; font-size: 30px; letter-spacing: -.02em; }
+    .muted { color: var(--muted); }
+    .support-card .tiny { color: var(--muted); font-size: 13px; }
+
+    form { display: grid; gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
     input, select, textarea {
-      width: 100%;
-      padding: 13px 14px;
-      border-radius: 12px;
-      border: 1px solid #d9dde1;
-      box-sizing: border-box;
-      font-size: 15px;
+      width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #dfe4ea;
+      background: #fff; color: var(--text); font: inherit;
     }
-    textarea {
-      min-height: 110px;
-      resize: vertical;
+    textarea { min-height: 122px; resize: vertical; }
+    label.checkbox {
+      display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted);
+      background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px;
     }
-    .small {
-      font-size: 14px;
-      color: #6b7280;
+    label.checkbox input { width: auto; margin-top: 2px; }
+    .notice {
+      margin-top: 12px; padding: 12px 14px; border-radius: 14px; display: none; font-size: 14px;
     }
-    .section {
-      padding-top: 52px;
+    .notice.ok { background: #eaf7ef; color: var(--success); display: block; }
+    .notice.err { background: #fff1f1; color: #9e2020; display: block; }
+
+    .section { padding: 34px 0; }
+    .section-head { display: flex; justify-content: space-between; gap: 18px; align-items: end; margin-bottom: 18px; }
+    .section-head p { max-width: 760px; margin: 0; color: var(--muted); }
+    .stake-grid, .feature-grid, .room-grid, .faq-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
     }
-    .stakeholders {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
+    .stake-grid .card, .feature-grid .card, .room-grid .card, .faq-grid .card { height: 100%; }
+    .feature-grid { grid-template-columns: repeat(4, 1fr); }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .pill {
+      padding: 10px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--muted); font-size: 13px;
     }
-    .stakeholders .card h3 {
-      margin-top: 0;
-      margin-bottom: 8px;
+
+    .counter-wrap { display: grid; grid-template-columns: .95fr 1.05fr; gap: 18px; }
+    .counter-box {
+      display: grid; gap: 16px;
     }
-    footer {
-      padding-top: 50px;
-      font-size: 14px;
-      color: #6b7280;
+    .counter-value { font-size: clamp(42px, 8vw, 76px); line-height: .95; letter-spacing: -.04em; margin: 0; }
+    .counter-sub { font-size: 16px; color: var(--muted); }
+    .list-toolbar {
+      display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap;
     }
-    @media (max-width: 800px) {
-      h1 {
-        font-size: 38px;
-      }
-      .sub {
-        font-size: 19px;
-      }
-      .grid, .stakeholders {
-        grid-template-columns: 1fr;
-      }
+    .supporter-list {
+      border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff;
+    }
+    .supporter-row {
+      display: grid; grid-template-columns: 1.3fr 1fr .8fr; gap: 12px; padding: 14px 16px; border-top: 1px solid var(--line); align-items: center;
+    }
+    .supporter-row:first-child { border-top: 0; }
+    .supporter-name { font-weight: 700; }
+    .supporter-role { color: var(--muted); font-size: 14px; }
+
+    .proposal-box {
+      display: grid; grid-template-columns: 1fr .9fr; gap: 18px;
+    }
+    .proposal-checklist { display: grid; gap: 12px; }
+    .check {
+      display: flex; gap: 10px; align-items: flex-start; color: var(--muted);
+    }
+    .check strong { color: var(--text); display: block; margin-bottom: 4px; }
+    .check-dot {
+      width: 24px; height: 24px; border-radius: 50%; background: #fff4e7; color: #b85d00; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; flex: 0 0 auto;
+    }
+
+    .dashboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .dash-card {
+      border-radius: 20px; padding: 18px; border: 1px solid var(--line); background: linear-gradient(180deg, #fff, #fbfbfc);
+    }
+    .dash-card span { color: var(--muted); font-size: 13px; }
+    .dash-card strong { display: block; margin-top: 10px; font-size: 28px; letter-spacing: -.02em; }
+
+    .data-room-gate { display: flex; flex-direction: column; gap: 16px; }
+    .locked { color: var(--muted); }
+    .file-list { display: grid; gap: 10px; }
+    .file-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; border-radius: 16px; background: #fff; border: 1px solid var(--line);
+    }
+    .file-item small { display: block; color: var(--muted); margin-top: 4px; }
+
+    .contact-grid { display: grid; grid-template-columns: 1fr .95fr; gap: 18px; }
+    .footer { padding: 30px 0 60px; color: var(--muted); font-size: 14px; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(17,24,39,.42); display: none; align-items: center; justify-content: center; z-index: 100;
+      padding: 18px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(100%, 560px); max-height: min(90vh, 900px); overflow: auto;
+      background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 30px 80px rgba(17,24,39,.28);
+    }
+    .modal-head { display: flex; justify-content: space-between; gap: 14px; align-items: start; margin-bottom: 16px; }
+    .x { background: transparent; border: 0; font-size: 28px; line-height: 1; cursor: pointer; }
+
+    .small-list { display: grid; gap: 10px; padding-left: 18px; color: var(--muted); }
+    .hidden { display: none !important; }
+
+    @media (max-width: 1080px) {
+      .hero-grid, .counter-wrap, .proposal-box, .contact-grid { grid-template-columns: 1fr; }
+      .feature-grid, .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .nav { flex-wrap: wrap; padding: 14px 0; }
+      .nav-links { display: none; }
+      .hero-meta, .stake-grid, .feature-grid, .room-grid, .faq-grid, .dashboard-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .supporter-row { grid-template-columns: 1fr; }
+      .section-head { align-items: start; }
+      h1 { font-size: 42px; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div class="logo">Akkume</div>
-      <h1>Upgrade the mortgage system with a reserve layer.</h1>
-      <p class="sub">
-        Introducing Bitcoin as a long-duration reserve layer for housing finance:
-        a pilot proposal to improve credit resilience, reduce loss severity, and lower taxpayer exposure.
-      </p>
-      <div class="cta-row">
+  <header class="topbar">
+    <div class="shell nav">
+      <a class="brand" href="#top">
+        <span class="brand-mark"></span>
+        <span>Akkume</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#proposal">Pilot Proposal</a>
+        <a href="#borrowers">Borrowers</a>
+        <a href="#institutions">Lenders / Investors / Servicers / Regulators</a>
+        <a href="#questionnaire">Questionnaire</a>
+        <a href="#dashboard">Akkume-ulate Bitcoin</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn btn-secondary" data-open-auth>Login</button>
         <a class="btn btn-primary" href="#support">Support the Pilot</a>
-        <a class="btn btn-secondary" href="#stakeholders">Who It Helps</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Reserve Layer • Housing Finance • Pilot Proposal</span>
+          <h1>Redirect the largest credit system in the world.</h1>
+          <p class="lead">A rule change that embeds long-duration reserves into mortgage credit—creating a structural demand layer and a more resilient system. This structure and page architecture follow your uploaded outline for landing page, pilot proposal, supporter signup, borrower page, institutional page, questionnaire, dashboard, and contact. fileciteturn1file0</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#proposal">See Proposal</a>
+            <a class="btn btn-secondary" href="#support">Sign Up to Support</a>
+          </div>
+          <div class="hero-meta">
+            <div class="metric">
+              <span class="kicker">Supporters</span>
+              <strong id="heroSupporterCount">0</strong>
+            </div>
+            <div class="metric">
+              <span class="kicker">Public backers</span>
+              <strong id="heroPublicCount">0</strong>
+            </div>
+            <div class="metric">
+              <span class="kicker">Strategic focus</span>
+              <strong>FHFA + MISMO</strong>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card gradient-card support-card" id="support">
+          <h2>Support the pilot</h2>
+          <p class="muted">Capture individual and company support, public or private backing, and active resource commitments.</p>
+          <form id="supportForm">
+            <div class="grid-2">
+              <input name="full_name" placeholder="Full name" required />
+              <input name="company" placeholder="Company or organization" />
+            </div>
+            <div class="grid-2">
+              <input name="email" type="email" placeholder="Email" required />
+              <input name="phone" type="tel" placeholder="Phone number" />
+            </div>
+            <div class="grid-2">
+              <select name="role" required>
+                <option value="">Select role</option>
+                <option>Borrower</option>
+                <option>Lender</option>
+                <option>Investor</option>
+                <option>Servicer</option>
+                <option>Regulator</option>
+                <option>Strategic Partner</option>
+                <option>Other</option>
+              </select>
+              <select name="visibility" required>
+                <option value="">Support visibility</option>
+                <option value="public">List publicly as a supporter</option>
+                <option value="private">Keep private, add to backer count</option>
+              </select>
+            </div>
+            <select name="help_type">
+              <option value="">How would you like to help?</option>
+              <option>Actively join the push</option>
+              <option>Pledge resources</option>
+              <option>Request briefing</option>
+              <option>Media / policy support</option>
+            </select>
+            <textarea name="notes" placeholder="How would you like to support or contribute?"></textarea>
+            <label class="checkbox"><input type="checkbox" name="signed_proposal" /> <span>I want to sign the proposal in support of the pilot and rule changes.</span></label>
+            <button class="btn btn-primary" type="submit">Submit support</button>
+            <div id="supportNotice" class="notice"></div>
+          </form>
+          <p class="tiny">After submit, users can copy a share link, appear publicly if selected, and be counted privately if not.</p>
+        </aside>
       </div>
     </section>
 
-    <section class="grid">
+    <section class="section shell" id="proposal">
+      <div class="section-head">
+        <div>
+          <h2>Pilot proposal</h2>
+          <p>The proposal centers on a fixed-supply reserve framework to enhance mortgage credit resilience, reduce systemic risk, and support pilot upgrades to GSE guides, MISMO standards, and reserve asset classification. fileciteturn1file3</p>
+        </div>
+        <button class="btn btn-secondary" data-open-proposal>Open full proposal flow</button>
+      </div>
+      <div class="proposal-box">
+        <div class="card">
+          <div class="proposal-checklist">
+            <div class="check"><span class="check-dot">1</span><div><strong>Reserve layer, not collateral.</strong> Introduce Bitcoin as a non-collateral credit enhancement layer, closer to MI / CRT than a pledge-and-liquidate loan. fileciteturn1file3</div></div>
+            <div class="check"><span class="check-dot">2</span><div><strong>Dual-asset credit model.</strong> Transition mortgage credit toward a more resilient framework that combines traditional assets with a fixed-supply reserve layer. fileciteturn1file0</div></div>
+            <div class="check"><span class="check-dot">3</span><div><strong>Standards and infrastructure.</strong> Pilot changes to guides, loan tapes, data elements, and reserve asset classification. fileciteturn1file3</div></div>
+          </div>
+          <div class="pill-row">
+            <span class="pill">Reduce taxpayer exposure</span>
+            <span class="pill">First-loss BTC buffer</span>
+            <span class="pill">Replace PMI</span>
+            <span class="pill">Improve capital efficiency</span>
+            <span class="pill">Increase access safely</span>
+            <span class="pill">No looser underwriting</span>
+          </div>
+        </div>
+        <div class="card gradient-card">
+          <h3 style="margin-top:0">Sign the proposal</h3>
+          <p class="muted">Capture a simple supporter signature flow now, with a verified-signer upgrade later.</p>
+          <form id="proposalForm">
+            <div class="grid-2">
+              <input name="sig_name" placeholder="Full name" required />
+              <input name="sig_company" placeholder="Company" />
+            </div>
+            <div class="grid-2">
+              <input name="sig_email" type="email" placeholder="Email" required />
+              <select name="sig_type" required>
+                <option value="">Signer type</option>
+                <option>Individual supporter</option>
+                <option>Strategic partner</option>
+                <option>Institutional contact</option>
+              </select>
+            </div>
+            <label class="checkbox"><input type="checkbox" required /> <span>I support the pilot proposal and proposed standards/rule changes.</span></label>
+            <button class="btn btn-primary" type="submit">Sign proposal</button>
+            <div id="proposalNotice" class="notice"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="borrowers">
+      <div class="section-head">
+        <div>
+          <h2>Borrower page</h2>
+          <p>Your borrower page vision centers on a simple emotional frame: “What if your mortgage built wealth instead of just debt?” plus a dual-asset model and lower taxpayer risk. fileciteturn1file0</p>
+        </div>
+      </div>
+      <div class="stake-grid">
+        <div class="card">
+          <h3>What if your mortgage built wealth instead of just debt?</h3>
+          <p class="muted">You pay for 30 years. You should have more to show for it. Introduce Bitcoin as a reserve layer reinforcing the credit system while lowering taxpayer risk in federally backed housing. fileciteturn1file0</p>
+        </div>
+        <div class="card">
+          <h3>Dual-asset credit model</h3>
+          <p class="muted">Pilot guidelines promote a transition to a dual-asset credit framework designed to boost resilience, modernize standards, and strengthen mortgage credit and affordability. fileciteturn1file0</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="institutions">
+      <div class="section-head">
+        <div>
+          <h2>Lenders / investors / servicers / regulators</h2>
+          <p>The institutional page should argue that capital flows are being decided now, fragility is visible, and standards work can strengthen the system before losses become systemic. fileciteturn1file0turn1file2</p>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <div class="card"><h3>Where capital flows next</h3><p class="muted">A policy and standards window is open now.</p></div>
+        <div class="card"><h3>Non-collateral enhancement</h3><p class="muted">Reserve layer positioned like MI / CRT, not direct borrower collateral. fileciteturn1file3</p></div>
+        <div class="card"><h3>Loss absorption shift</h3><p class="muted">Your draft frames a lower taxpayer share and earlier loss absorption higher in the stack. fileciteturn1file2</p></div>
+        <div class="card"><h3>Proof of weakness</h3><p class="muted">FHA stress and lagged default waves make the case for targeted credit enhancement. fileciteturn1file2</p></div>
+      </div>
+    </section>
+
+    <section class="section shell" id="questionnaire">
+      <div class="section-head">
+        <div>
+          <h2>Questionnaire: data capture</h2>
+          <p>Structured intake for companies, allies, and stakeholders who want to support, brief, fund, partner, or be listed publicly.</p>
+        </div>
+      </div>
       <div class="card">
-        <h2>The proposal</h2>
-        <p>
-          Akkume proposes a pilot that introduces a fixed-supply digital asset reserve layer into mortgage finance.
-          The goal is not speculation. The goal is stronger credit structure, better alignment across the stack,
-          and a more resilient housing finance system.
-        </p>
-        <ul class="bullets">
-          <li>Support a pilot for reserve-layer mortgage enhancement</li>
-          <li>Build support for rule and standards changes</li>
-          <li>Create a coalition of borrowers, lenders, investors, servicers, and regulators</li>
-        </ul>
-      </div>
-
-      <div class="card" id="support">
-        <h2>Support the Pilot</h2>
-        <form>
-          <input type="text" placeholder="Full name" />
-          <input type="text" placeholder="Company or organization" />
-          <input type="email" placeholder="Email" />
-          <input type="tel" placeholder="Phone number" />
-          <select>
-            <option>Select your role</option>
-            <option>Borrower</option>
-            <option>Lender</option>
-            <option>Investor</option>
-            <option>Servicer</option>
-            <option>Regulator</option>
-            <option>Other</option>
-          </select>
-          <select>
-            <option>Support visibility</option>
-            <option>List me publicly as a supporter</option>
-            <option>Keep me private, count me in totals</option>
-          </select>
-          <select>
-            <option>How would you like to help?</option>
-            <option>Join the push actively</option>
-            <option>Pledge resources</option>
-            <option>Learn more first</option>
-          </select>
-          <textarea placeholder="How would you like to support or contribute?"></textarea>
-          <button class="btn btn-primary" type="button">Submit Support</button>
+        <form id="questionnaireForm">
+          <div class="grid-3">
+            <input name="q_name" placeholder="Name" required />
+            <input name="q_company" placeholder="Company" />
+            <input name="q_title" placeholder="Title / role" />
+          </div>
+          <div class="grid-3">
+            <input name="q_email" type="email" placeholder="Email" required />
+            <input name="q_phone" placeholder="Phone" />
+            <select name="q_type">
+              <option value="">Stakeholder type</option>
+              <option>Borrower advocate</option>
+              <option>Lender</option>
+              <option>Investor</option>
+              <option>Servicer</option>
+              <option>Regulator / policy</option>
+              <option>Strategic partner</option>
+              <option>Media</option>
+            </select>
+          </div>
+          <div class="grid-2">
+            <select name="q_interest">
+              <option value="">Primary interest</option>
+              <option>Pilot participation</option>
+              <option>Standards / MISMO</option>
+              <option>Data / analytics</option>
+              <option>Capital / treasury strategy</option>
+              <option>Public support</option>
+            </select>
+            <select name="q_resources">
+              <option value="">Resources available</option>
+              <option>Policy access</option>
+              <option>Distribution / audience</option>
+              <option>Capital</option>
+              <option>Technical build help</option>
+              <option>Research / data</option>
+            </select>
+          </div>
+          <textarea name="q_notes" placeholder="What would make you lean in? What can you contribute? What would you want to review first?"></textarea>
+          <button class="btn btn-primary" type="submit">Submit questionnaire</button>
+          <div id="questionnaireNotice" class="notice"></div>
         </form>
-        <p class="small" style="margin-top:12px;">
-          Form storage and login can be connected next using Supabase or another backend.
-        </p>
       </div>
     </section>
 
-    <section class="section" id="stakeholders">
-      <h2>Who this is for</h2>
-      <div class="stakeholders">
-        <div class="card">
-          <h3>Borrowers</h3>
-          <p>Potential for a more resilient mortgage structure and stronger long-term household balance sheets.</p>
+    <section class="section shell" id="supporters">
+      <div class="section-head">
+        <div>
+          <h2>Live supporter counter + public supporter list</h2>
+          <p>This section turns the site into a coalition engine: public supporters are listed, private supporters increase the visible total, and strategic partners can be separated later.</p>
+        </div>
+        <button class="btn btn-secondary" id="shareButton">Copy share link</button>
+      </div>
+      <div class="counter-wrap">
+        <div class="card gradient-card counter-box">
+          <div>
+            <div class="kicker">Founding coalition</div>
+            <p class="counter-value" id="supporterCount">0</p>
+            <div class="counter-sub">Supporters who signed, backed, or requested to actively participate</div>
+          </div>
+          <div>
+            <div class="kicker">Public supporters</div>
+            <p class="counter-value" style="font-size:42px" id="publicSupporterCount">0</p>
+          </div>
         </div>
         <div class="card">
-          <h3>Lenders</h3>
-          <p>Improved credit enhancement and reduced loss severity through a reserve-based design.</p>
-        </div>
-        <div class="card">
-          <h3>Investors</h3>
-          <p>A more durable structure for mortgage credit with better alignment across market participants.</p>
-        </div>
-        <div class="card">
-          <h3>Servicers & Regulators</h3>
-          <p>Better workout outcomes, clearer risk visibility, and a path toward reduced taxpayer burden.</p>
+          <div class="list-toolbar">
+            <strong>Public supporters</strong>
+            <span class="muted" id="supporterRefreshNote">Loading…</span>
+          </div>
+          <div id="supporterList" class="supporter-list"></div>
         </div>
       </div>
     </section>
 
-    <footer>
-      Akkume.com — reserve-layer infrastructure for next-generation housing finance.
-    </footer>
+    <section class="section shell" id="dashboard">
+      <div class="section-head">
+        <div>
+          <h2>Akkume-ulate Bitcoin</h2>
+          <p>Your dashboard vision includes Bitcoin-backed loans, enhanced mortgages, backed homes, ABS, enhanced bonds, and rated MBS/ABS views. fileciteturn1file1turn1file2</p>
+        </div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dash-card"><span>Bitcoin backed loans</span><strong>Rates</strong></div>
+        <div class="dash-card"><span>Bitcoin enhanced mortgages</span><strong>HODL Buffer</strong></div>
+        <div class="dash-card"><span>Bitcoin backed homes</span><strong>Rates</strong></div>
+        <div class="dash-card"><span>Bitcoin ABS</span><strong>Coupon</strong></div>
+        <div class="dash-card"><span>Enhanced loans</span><strong>Downpayment</strong></div>
+        <div class="dash-card"><span>Rated Bitcoin ABS</span><strong>Size / Rating</strong></div>
+        <div class="dash-card"><span>Bitcoin enhanced bonds</span><strong>Coupon</strong></div>
+        <div class="dash-card"><span>Rated Bitcoin MBS</span><strong>Size / Rating</strong></div>
+      </div>
+    </section>
+
+    <section class="section shell" id="dataroom">
+      <div class="section-head">
+        <div>
+          <h2>Login + data room</h2>
+          <p>Phase 1 uses email magic-link login. After login, members can view the proposal, charts, private briefing files, and strategic partner material.</p>
+        </div>
+        <button class="btn btn-primary" data-open-auth id="gateAction">Login to access</button>
+      </div>
+      <div class="room-grid">
+        <div class="card data-room-gate">
+          <div class="locked" id="authStateText">Not logged in. Login required to view protected files.</div>
+          <div class="file-list" id="dataRoomFiles">
+            <div class="file-item"><div><strong>Pilot proposal deck</strong><small>Private PDF / deck link</small></div><span>Locked</span></div>
+            <div class="file-item"><div><strong>FHFA / MISMO briefing memo</strong><small>Policy memo</small></div><span>Locked</span></div>
+            <div class="file-item"><div><strong>Loss absorption visuals</strong><small>Charts and board graphics</small></div><span>Locked</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">How to wire the data room</h3>
+          <ul class="small-list">
+            <li>Create a Supabase <strong>Auth</strong> magic-link login.</li>
+            <li>Create a <strong>profiles</strong> table with role and access level.</li>
+            <li>Store files in <strong>Supabase Storage</strong> or link private folders.</li>
+            <li>Show download links only when a session exists.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="contact">
+      <div class="section-head">
+        <div>
+          <h2>Contact</h2>
+          <p>Your draft includes a contact page. The cleanest setup is a domain email like <strong>hello@akkume.com</strong>, <strong>support@akkume.com</strong>, and <strong>partners@akkume.com</strong>.</p>
+        </div>
+      </div>
+      <div class="contact-grid">
+        <div class="card">
+          <h3 style="margin-top:0">Recommended inboxes</h3>
+          <div class="pill-row" style="margin-top:0">
+            <span class="pill">hello@akkume.com</span>
+            <span class="pill">support@akkume.com</span>
+            <span class="pill">partners@akkume.com</span>
+            <span class="pill">press@akkume.com</span>
+          </div>
+          <p class="muted">For setup, buy custom-domain email from Namecheap Private Email, Google Workspace, or Zoho Mail. Namecheap confirms Private Email is a separate product from hosting, and Google Workspace and Zoho both support custom business email on your own domain. ([namecheap.com](https://www.namecheap.com/hosting/email/?utm_source=chatgpt.com))</p>
+          <ul class="small-list">
+            <li><strong>Easiest:</strong> Namecheap Private Email, because your domain is already there. Namecheap says you do not need a web hosting plan to use it. ([namecheap.com](https://www.namecheap.com/hosting/email/?utm_source=chatgpt.com))</li>
+            <li><strong>Best if you want Gmail:</strong> Google Workspace with your domain. ([workspace.google.com](https://workspace.google.com/solutions/business-email/?utm_source=chatgpt.com))</li>
+            <li><strong>Lean alternative:</strong> Zoho Mail for custom domain inboxes. ([zoho.com](https://www.zoho.com/mail/custom-domain-email.html?utm_source=chatgpt.com))</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Contact form</h3>
+          <form id="contactForm">
+            <input name="contact_name" placeholder="Name" required />
+            <input name="contact_email" type="email" placeholder="Email" required />
+            <input name="contact_company" placeholder="Company" />
+            <textarea name="contact_message" placeholder="How can we help?"></textarea>
+            <button class="btn btn-primary" type="submit">Send inquiry</button>
+            <div id="contactNotice" class="notice"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer shell">
+    Akkume — fixed-supply reserve framework for housing finance.
+  </footer>
+
+  <div class="modal-backdrop" id="authModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h3 style="margin:0 0 6px">Login</h3>
+          <div class="muted">Use a magic link to access the data room.</div>
+        </div>
+        <button class="x" data-close-auth>&times;</button>
+      </div>
+      <form id="authForm">
+        <input type="email" name="auth_email" placeholder="Email" required />
+        <button class="btn btn-primary" type="submit">Send magic link</button>
+        <div id="authNotice" class="notice"></div>
+      </form>
+    </div>
   </div>
+
+  <div class="modal-backdrop" id="proposalModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h3 style="margin:0 0 6px">Proposal summary</h3>
+          <div class="muted">Use this as the first structured flow before a full downloadable brief.</div>
+        </div>
+        <button class="x" data-close-proposal>&times;</button>
+      </div>
+      <ul class="small-list">
+        <li>Embed a long-duration reserve layer into mortgage credit.</li>
+        <li>Standardize reserve classification through MISMO and pilot guide changes.</li>
+        <li>Reduce taxpayer exposure while improving credit structure resilience.</li>
+        <li>Create visible coalition support from borrowers, lenders, investors, servicers, regulators, and partners.</li>
+      </ul>
+      <a href="#support" class="btn btn-primary" data-close-proposal>Support the pilot</a>
+    </div>
+  </div>
+
+  <!--
+    AKKUME SETUP NOTES
+    1) Replace the placeholders below with your real Supabase values.
+    2) Create three tables in Supabase:
+       supporters(full_name, company, email, phone, role, visibility, help_type, notes, signed_proposal, created_at)
+       proposal_signers(name, company, email, signer_type, created_at)
+       contact_inquiries(name, email, company, message, created_at)
+    3) Optional questionnaire table:
+       questionnaires(name, company, title, email, phone, stakeholder_type, primary_interest, resources, notes, created_at)
+    4) Enable INSERT policies for public forms, and SELECT for public supporter count/list if desired.
+    5) For data room login, enable Supabase Auth (email magic link).
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+    const USE_SUPABASE = !SUPABASE_URL.includes("YOUR_") && !SUPABASE_ANON_KEY.includes("YOUR_");
+    const supabaseClient = USE_SUPABASE ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    const $ = (id) => document.getElementById(id);
+    const supportNotice = $("supportNotice");
+    const proposalNotice = $("proposalNotice");
+    const questionnaireNotice = $("questionnaireNotice");
+    const contactNotice = $("contactNotice");
+    const authNotice = $("authNotice");
+
+    function showNotice(el, message, ok = true) {
+      el.className = `notice ${ok ? 'ok' : 'err'}`;
+      el.textContent = message;
+    }
+
+    function clearNotice(el) {
+      el.className = 'notice';
+      el.textContent = '';
+    }
+
+    function shareSite() {
+      const url = window.location.origin;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => alert('Share link copied.'));
+      } else {
+        window.prompt('Copy this link:', url);
+      }
+    }
+
+    $("shareButton").addEventListener('click', shareSite);
+
+    document.querySelectorAll('[data-open-auth]').forEach(btn => btn.addEventListener('click', () => $('authModal').classList.add('open')));
+    document.querySelectorAll('[data-close-auth]').forEach(btn => btn.addEventListener('click', () => $('authModal').classList.remove('open')));
+    document.querySelectorAll('[data-open-proposal]').forEach(btn => btn.addEventListener('click', () => $('proposalModal').classList.add('open')));
+    document.querySelectorAll('[data-close-proposal]').forEach(btn => btn.addEventListener('click', () => $('proposalModal').classList.remove('open')));
+
+    async function loadSupporters() {
+      const list = $('supporterList');
+      if (!USE_SUPABASE) {
+        list.innerHTML = `<div class="supporter-row"><div><div class="supporter-name">Preview mode</div><div class="supporter-role">Connect Supabase to load real supporters</div></div><div class="muted">Akkume</div><div class="muted">public</div></div>`;
+        $('supporterCount').textContent = '0';
+        $('heroSupporterCount').textContent = '0';
+        $('publicSupporterCount').textContent = '0';
+        $('heroPublicCount').textContent = '0';
+        $('supporterRefreshNote').textContent = 'Preview mode';
+        return;
+      }
+
+      const { count: totalCount } = await supabaseClient
+        .from('supporters')
+        .select('*', { count: 'exact', head: true });
+
+      const { data: publicSupporters, count: publicCount } = await supabaseClient
+        .from('supporters')
+        .select('full_name, company, role, visibility, created_at', { count: 'exact' })
+        .eq('visibility', 'public')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      $('supporterCount').textContent = totalCount || 0;
+      $('heroSupporterCount').textContent = totalCount || 0;
+      $('publicSupporterCount').textContent = publicCount || 0;
+      $('heroPublicCount').textContent = publicCount || 0;
+      $('supporterRefreshNote').textContent = 'Live';
+
+      if (!publicSupporters || publicSupporters.length === 0) {
+        list.innerHTML = `<div class="supporter-row"><div><div class="supporter-name">No public supporters yet</div><div class="supporter-role">The first visible backers will appear here.</div></div><div></div><div></div></div>`;
+        return;
+      }
+
+      list.innerHTML = publicSupporters.map(item => `
+        <div class="supporter-row">
+          <div>
+            <div class="supporter-name">${item.full_name || 'Supporter'}</div>
+            <div class="supporter-role">${item.role || 'Supporter'}</div>
+          </div>
+          <div class="muted">${item.company || ''}</div>
+          <div class="muted">Public</div>
+        </div>
+      `).join('');
+    }
+
+    async function insertRow(table, payload) {
+      if (!USE_SUPABASE) return { error: null };
+      return supabaseClient.from(table).insert([payload]);
+    }
+
+    $('supportForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearNotice(supportNotice);
+      const fd = new FormData(e.target);
+      const payload = {
+        full_name: fd.get('full_name'),
+        company: fd.get('company'),
+        email: fd.get('email'),
+        phone: fd.get('phone'),
+        role: fd.get('role'),
+        visibility: fd.get('visibility'),
+        help_type: fd.get('help_type'),
+        notes: fd.get('notes'),
+        signed_proposal: fd.get('signed_proposal') === 'on'
+      };
+      const { error } = await insertRow('supporters', payload);
+      if (error) {
+        console.error(error);
+        showNotice(supportNotice, 'There was a problem saving your support.', false);
+        return;
+      }
+      showNotice(supportNotice, 'Thank you. You are now part of the Akkume founding coalition.');
+      e.target.reset();
+      loadSupporters();
+    });
+
+    $('proposalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearNotice(proposalNotice);
+      const fd = new FormData(e.target);
+      const payload = {
+        name: fd.get('sig_name'),
+        company: fd.get('sig_company'),
+        email: fd.get('sig_email'),
+        signer_type: fd.get('sig_type')
+      };
+      const { error } = await insertRow('proposal_signers', payload);
+      if (error) {
+        console.error(error);
+        showNotice(proposalNotice, 'Could not save proposal signature.', false);
+        return;
+      }
+      showNotice(proposalNotice, 'Proposal signature saved.');
+      e.target.reset();
+    });
+
+    $('questionnaireForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearNotice(questionnaireNotice);
+      const fd = new FormData(e.target);
+      const payload = {
+        name: fd.get('q_name'),
+        company: fd.get('q_company'),
+        title: fd.get('q_title'),
+        email: fd.get('q_email'),
+        phone: fd.get('q_phone'),
+        stakeholder_type: fd.get('q_type'),
+        primary_interest: fd.get('q_interest'),
+        resources: fd.get('q_resources'),
+        notes: fd.get('q_notes')
+      };
+      const { error } = await insertRow('questionnaires', payload);
+      if (error) {
+        console.error(error);
+        showNotice(questionnaireNotice, 'Could not submit questionnaire.', false);
+        return;
+      }
+      showNotice(questionnaireNotice, 'Questionnaire submitted.');
+      e.target.reset();
+    });
+
+    $('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearNotice(contactNotice);
+      const fd = new FormData(e.target);
+      const payload = {
+        name: fd.get('contact_name'),
+        email: fd.get('contact_email'),
+        company: fd.get('contact_company'),
+        message: fd.get('contact_message')
+      };
+      const { error } = await insertRow('contact_inquiries', payload);
+      if (error) {
+        console.error(error);
+        showNotice(contactNotice, 'Could not send inquiry.', false);
+        return;
+      }
+      showNotice(contactNotice, 'Inquiry sent.');
+      e.target.reset();
+    });
+
+    $('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearNotice(authNotice);
+      if (!USE_SUPABASE) {
+        showNotice(authNotice, 'Add Supabase keys first, then enable Auth > Email magic links.', false);
+        return;
+      }
+      const email = new FormData(e.target).get('auth_email');
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin }
+      });
+      if (error) {
+        console.error(error);
+        showNotice(authNotice, 'Could not send magic link.', false);
+        return;
+      }
+      showNotice(authNotice, 'Magic link sent. Check your inbox.');
+    });
+
+    async function syncAuthState() {
+      if (!USE_SUPABASE) return;
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user;
+      if (!user) return;
+      $('authStateText').textContent = `Logged in as ${user.email}`;
+      $('gateAction').textContent = 'Access granted';
+      const items = document.querySelectorAll('#dataRoomFiles .file-item span');
+      items.forEach(el => el.textContent = 'Available');
+    }
+
+    loadSupporters();
+    syncAuthState();
+  </script>
 </body>
 </html>
