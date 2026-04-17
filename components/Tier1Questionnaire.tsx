@@ -118,29 +118,45 @@ export default function Tier1Questionnaire() {
         ))}
       </div>
 
-      {[
-        ['Does adding a borrower-owned reserve asset improve mortgage resilience?', 'reserve_improves_resilience', ['Yes', 'No', 'Unsure']],
-        ['Should a borrower-funded reserve qualify as a closing cost?', 'reserve_as_closing_cost', ['Yes', 'No', 'Unsure']],
-        ['Do you support a pilot program through FHFA?', 'support_fhfa_pilot', ['Yes', 'No', 'Need more information']],
-        ['Would you or your organization consider participating in a pilot?', 'consider_pilot_participation', ['Yes', 'Maybe', 'No']],
-      ].map(([label, key, options]) => (
-        <div key={key as string}>
-          <div className="mb-2 text-sm font-medium">{label as string}</div>
-          <div className="grid gap-2">
-            {(options as string[]).map((item) => (
-              <label key={item} className="flex items-center gap-2 rounded-xl border p-3 text-sm">
-                <input
-                  type="radio"
-                  name={key as string}
-                  checked={(form as any)[key] === item}
-                  onChange={() => setForm({ ...form, [key]: item } as any)}
-                />
-                <span>{item}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+{[
+  {
+    label: 'Does adding a borrower-owned reserve asset improve mortgage resilience?',
+    key: 'reserve_improves_resilience' as const,
+    options: ['Yes', 'No', 'Unsure'],
+  },
+  {
+    label: 'Should a borrower-funded reserve qualify as a closing cost?',
+    key: 'reserve_as_closing_cost' as const,
+    options: ['Yes', 'No', 'Unsure'],
+  },
+  {
+    label: 'Do you support a pilot program through FHFA?',
+    key: 'support_fhfa_pilot' as const,
+    options: ['Yes', 'No', 'Need more information'],
+  },
+  {
+    label: 'Would you or your organization consider participating in a pilot?',
+    key: 'consider_pilot_participation' as const,
+    options: ['Yes', 'Maybe', 'No'],
+  },
+].map((field) => (
+  <div key={field.key}>
+    <div className="mb-2 text-sm font-medium">{field.label}</div>
+    <div className="grid gap-2">
+      {field.options.map((item) => (
+        <label key={item} className="flex items-center gap-2 rounded-xl border p-3 text-sm">
+          <input
+            type="radio"
+            name={field.key}
+            checked={form[field.key] === item}
+            onChange={() => setForm({ ...form, [field.key]: item })}
+          />
+          <span>{item}</span>
+        </label>
       ))}
+    </div>
+  </div>
+))}
 
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={form.is_public_supporter} onChange={(e) => setForm({ ...form, is_public_supporter: e.target.checked })} />
