@@ -1,838 +1,1428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Akkume</title>
-  <meta name="description" content="Akkume introduces Bitcoin as a reserve layer for housing finance." />
-  <style>
-    :root {
-      --bg: #ffffff;
-      --text: #1f2933;
-      --muted: #5f6b76;
-      --line: #e8ebef;
-      --card: #fafbfc;
-      --orange: #f58a1f;
-      --orange-2: #ffb14d;
-      --dark: #111827;
-      --success: #177245;
-      --shadow: 0 18px 40px rgba(17, 24, 39, 0.07);
-      --radius: 22px;
-      --max: 1180px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akkume — Bitcoin Reserve Layer for U.S. Mortgage Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --navy:#0B1628;--navy2:#112040;--gold:#E8891A;--gold2:#F2A623;--gold-light:#FDF3E0;
+  --cream:#FAF7F2;--white:#FFFFFF;--red-alert:#C0392B;--green-safe:#1E6B3C;
+  --text:#1A1A2E;--muted:#5A6478;--border:#E2E4EA;
+  --font-serif:'DM Serif Display',Georgia,serif;--font-sans:'DM Sans',system-ui,sans-serif;
+  --radius:12px;--radius-lg:20px;--shadow:0 4px 24px rgba(11,22,40,.08);--shadow-lg:0 12px 48px rgba(11,22,40,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);color:var(--text);background:var(--cream);line-height:1.65;overflow-x:hidden}
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.45;
-    }
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;height:62px}
+.logo-mark{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo-icon svg{width:34px;height:34px}
+.logo-text{font-family:var(--font-serif);font-size:1.35rem;color:var(--white);letter-spacing:-.02em}
+.nav-links{display:flex;gap:0;list-style:none}
+.nav-links a{display:block;padding:.45rem .75rem;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active-tab{color:var(--gold)}
+.nav-cta{background:var(--gold)!important;color:var(--navy)!important;border-radius:6px!important;padding:.4rem .85rem!important;font-weight:700!important}
+.nav-cta:hover{background:var(--gold2)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;border:none;background:none}
+.hamburger span{display:block;width:22px;height:2px;background:rgba(255,255,255,.8);border-radius:2px}
+.mobile-menu{display:none;position:fixed;inset:62px 0 0 0;background:var(--navy);z-index:99;flex-direction:column;padding:1.75rem 1.5rem;gap:.4rem;overflow-y:auto}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-size:1rem;color:rgba(255,255,255,.8);text-decoration:none;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-weight:500}
+.mobile-menu a:hover{color:var(--gold)}
 
-    .shell { width: min(100% - 32px, var(--max)); margin: 0 auto; }
-    .topbar {
-      position: sticky; top: 0; z-index: 50;
-      backdrop-filter: blur(14px);
-      background: rgba(255,255,255,.88);
-      border-bottom: 1px solid rgba(232,235,239,.9);
-    }
-    .nav {
-      display: flex; align-items: center; justify-content: space-between;
-      min-height: 76px; gap: 18px;
-    }
-    .brand { display: flex; align-items: center; gap: 14px; font-weight: 800; letter-spacing: .01em; }
-    .brand-mark {
-      width: 38px; height: 38px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--orange-2), var(--orange));
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-    .brand-mark::before, .brand-mark::after {
-      content: ""; position: absolute; inset: 8px; border: 2px solid rgba(255,255,255,.95); border-radius: 8px;
-    }
-    .brand-mark::after { inset: 13px; border-radius: 4px; }
-    .nav-links {
-      display: flex; align-items: center; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 14px;
-    }
-    .nav-actions { display: flex; gap: 10px; align-items: center; }
+/* TABS */
+.tab-section{display:none}
+.tab-section.active{display:block}
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      border: 1px solid transparent; border-radius: 999px; padding: 13px 18px; font-weight: 700;
-      cursor: pointer; transition: .2s ease; font-size: 14px;
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn-primary {
-      background: linear-gradient(90deg, var(--orange), #f36c14);
-      color: #fff; box-shadow: 0 14px 30px rgba(245,138,31,.25);
-    }
-    .btn-secondary { background: #fff; border-color: var(--line); color: var(--text); }
-    .btn-ghost { background: transparent; border-color: transparent; color: var(--muted); }
+/* HERO */
+.hero{min-height:90vh;background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 55%,#1a2a4a 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding:5rem 1.5rem 4rem}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,137,26,.15);border:1px solid rgba(232,137,26,.3);color:var(--gold);padding:.38rem .88rem;border-radius:99px;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.4rem}
+.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-family:var(--font-serif);font-size:clamp(2.1rem,4vw,3.3rem);color:var(--white);line-height:1.15;letter-spacing:-.03em;margin-bottom:1.2rem}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,.68);max-width:520px;margin-bottom:1.8rem;line-height:1.7}
+.hero-btns{display:flex;gap:.9rem;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--navy);padding:.72rem 1.6rem;border-radius:8px;font-weight:700;font-size:.88rem;text-decoration:none;transition:all .2s;border:none;cursor:pointer;display:inline-block;white-space:nowrap}
+.btn-primary:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(232,137,26,.35)}
+.btn-outline{background:transparent;color:var(--white);padding:.72rem 1.6rem;border-radius:8px;font-weight:600;font-size:.88rem;text-decoration:none;border:1.5px solid rgba(255,255,255,.3);transition:all .2s;cursor:pointer;display:inline-block;white-space:nowrap}
+.btn-outline:hover{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.06)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2.5rem}
+.stat-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:1.15rem}
+.stat-num{font-family:var(--font-serif);font-size:1.75rem;color:var(--gold);display:block;margin-bottom:.2rem}
+.stat-label{font-size:.74rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em}
+.hero-visual{display:flex;flex-direction:column;gap:.9rem}
+.alert-card{background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.35);border-radius:var(--radius-lg);padding:1.4rem;color:var(--white)}
+.alert-header{display:flex;align-items:center;gap:10px;margin-bottom:.7rem}
+.alert-icon{width:30px;height:30px;background:var(--red-alert);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.alert-stat{font-family:var(--font-serif);font-size:2.2rem;color:#E85B4B;line-height:1}
+.alert-desc{font-size:.8rem;color:rgba(255,255,255,.6);margin-top:.45rem}
+.delinq-bars{display:flex;flex-direction:column;gap:.55rem;margin-top:.9rem}
+.dbar{display:flex;align-items:center;gap:8px}
+.dbar-label{font-size:.74rem;color:rgba(255,255,255,.55);width:72px;flex-shrink:0}
+.dbar-track{flex:1;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
+.dbar-fill{height:100%;border-radius:4px}
+.dbar-val{font-size:.8rem;font-weight:600;color:var(--white);width:44px;text-align:right}
+.mini-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center}
+.mini-label{font-size:.74rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.05em}
+.mini-val{font-weight:700;font-size:.95rem;color:var(--white)}
+.mini-badge{font-size:.7rem;padding:.18rem .5rem;border-radius:4px;font-weight:700}
+.badge-red{background:rgba(192,57,43,.25);color:#E85B4B}
+.badge-orange{background:rgba(232,137,26,.2);color:var(--gold2)}
 
-    .hero { padding: 68px 0 34px; }
-    .hero-grid {
-      display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: stretch;
-    }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px;
-      border-radius: 999px; background: #fff4e7; color: #b85d00; font-size: 12px; font-weight: 700;
-      letter-spacing: .02em; margin-bottom: 18px;
-    }
-    h1 {
-      margin: 0 0 16px; font-size: clamp(40px, 6vw, 74px); line-height: .98; letter-spacing: -.03em;
-      max-width: 760px;
-    }
-    .hero p.lead {
-      margin: 0 0 24px; color: var(--muted); font-size: clamp(18px, 2vw, 22px); max-width: 730px;
-    }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 26px; }
-    .hero-meta {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 28px;
-    }
-    .metric {
-      background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow);
-    }
-    .metric .kicker { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
-    .metric strong { display: block; margin-top: 10px; font-size: 28px; }
+/* SECTIONS */
+.section{padding:4.5rem 1.5rem}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-tag{font-size:.73rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem}
+.section-title{font-family:var(--font-serif);font-size:clamp(1.75rem,3.5vw,2.6rem);color:var(--navy);letter-spacing:-.03em;line-height:1.2;margin-bottom:.9rem}
+.section-sub{font-size:.97rem;color:var(--muted);max-width:580px;margin-bottom:2.25rem;line-height:1.7}
 
-    .card {
-      background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow);
-    }
-    .gradient-card {
-      background: linear-gradient(180deg, rgba(255,245,235,1), rgba(255,255,255,1));
-    }
-    .support-card h2, .section-head h2 { margin: 0 0 10px; font-size: 30px; letter-spacing: -.02em; }
-    .muted { color: var(--muted); }
-    .support-card .tiny { color: var(--muted); font-size: 13px; }
+/* CARDS & BLOCKS */
+.prop-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+.prop-num{display:inline-flex;width:34px;height:34px;background:var(--navy);color:var(--gold);border-radius:8px;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;margin-bottom:.65rem}
+.prop-title{font-weight:700;font-size:.97rem;color:var(--navy);margin-bottom:.35rem}
+.prop-body{font-size:.86rem;color:var(--muted);line-height:1.65}
+.objective-table{width:100%;border-collapse:collapse;font-size:.86rem;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.objective-table th{background:var(--navy);color:var(--white);padding:.8rem 1rem;text-align:left;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.objective-table td{padding:.8rem 1rem;border-bottom:1px solid var(--border);background:var(--white)}
+.objective-table tr:last-child td{border-bottom:none}
+.objective-table td:last-child{color:var(--green-safe);font-weight:600;font-size:.82rem}
+.pilot-phases{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin:1.75rem 0}
+.phase-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;text-align:center;box-shadow:var(--shadow)}
+.phase-amt{font-family:var(--font-serif);font-size:1.5rem;color:var(--navy);margin-bottom:.2rem}
+.phase-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.phase-tag{font-size:.72rem;background:var(--gold-light);color:var(--gold);padding:.18rem .55rem;border-radius:4px;font-weight:700;display:inline-block;margin-top:.35rem}
 
-    form { display: grid; gap: 12px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-    input, select, textarea {
-      width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #dfe4ea;
-      background: #fff; color: var(--text); font: inherit;
-    }
-    textarea { min-height: 122px; resize: vertical; }
-    label.checkbox {
-      display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted);
-      background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px;
-    }
-    label.checkbox input { width: auto; margin-top: 2px; }
-    .notice {
-      margin-top: 12px; padding: 12px 14px; border-radius: 14px; display: none; font-size: 14px;
-    }
-    .notice.ok { background: #eaf7ef; color: var(--success); display: block; }
-    .notice.err { background: #fff1f1; color: #9e2020; display: block; }
+/* FORM STYLES (dark bg context) */
+.dark-form-field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.7rem}
+.dark-form-field label{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.65);letter-spacing:.04em;text-transform:uppercase}
+.dark-form-field input,.dark-form-field select,.dark-form-field textarea{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.62rem .88rem;color:var(--white);font-size:.88rem;font-family:var(--font-sans);outline:none;transition:border .2s;width:100%}
+.dark-form-field input::placeholder{color:rgba(255,255,255,.3)}
+.dark-form-field input:focus,.dark-form-field select:focus,.dark-form-field textarea:focus{border-color:var(--gold)}
+.dark-form-field select option{background:var(--navy2);color:var(--white)}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.form-check{display:flex;align-items:flex-start;gap:.7rem;margin:.9rem 0;font-size:.86rem;color:rgba(255,255,255,.72)}
+.form-check input[type=checkbox]{width:17px;height:17px;flex-shrink:0;margin-top:2px;accent-color:var(--gold);cursor:pointer}
+.upload-area{border:1.5px dashed rgba(255,255,255,.2);border-radius:10px;padding:1.15rem;text-align:center;cursor:pointer;transition:.2s;margin-bottom:.7rem}
+.upload-area:hover{border-color:var(--gold);background:rgba(232,137,26,.05)}
+.upload-area p{font-size:.8rem;color:rgba(255,255,255,.45);margin-top:.3rem}
+#upload-preview{max-height:56px;border-radius:6px;display:none;margin:0 auto .4rem}
 
-    .section { padding: 34px 0; }
-    .section-head { display: flex; justify-content: space-between; gap: 18px; align-items: end; margin-bottom: 18px; }
-    .section-head p { max-width: 760px; margin: 0; color: var(--muted); }
-    .stake-grid, .feature-grid, .room-grid, .faq-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
-    }
-    .stake-grid .card, .feature-grid .card, .room-grid .card, .faq-grid .card { height: 100%; }
-    .feature-grid { grid-template-columns: repeat(4, 1fr); }
-    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
-    .pill {
-      padding: 10px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--muted); font-size: 13px;
-    }
+/* COALITION / SUPPORTERS */
+.supporters-counter{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2.5rem}
+.counter-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;text-align:center;box-shadow:var(--shadow)}
+.counter-num{font-family:var(--font-serif);font-size:2.6rem;color:var(--navy);display:block}
+.counter-label{font-size:.77rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:.25rem}
+.supporters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.9rem;margin-bottom:2.25rem}
+.supporter-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.15rem;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.45rem}
+.supporter-name{font-weight:700;font-size:.93rem;color:var(--navy)}
+.supporter-role{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.supporter-msg{font-size:.83rem;color:var(--text);font-style:italic;line-height:1.5}
+.supporter-badge{display:inline-block;font-size:.7rem;font-weight:700;padding:.18rem .5rem;border-radius:4px;margin-top:.2rem}
+.badge-public{background:#E8F5EB;color:#1E6B3C}
+.badge-private{background:#EEF0F5;color:var(--muted)}
+.coalition-wrap{background:var(--navy);border-radius:var(--radius-lg);padding:2.25rem;margin-top:1.75rem}
+.coalition-wrap h3{font-family:var(--font-serif);font-size:1.45rem;color:var(--white);margin-bottom:.35rem}
+.coalition-wrap>p{font-size:.86rem;color:rgba(255,255,255,.52);margin-bottom:1.4rem}
+.step-indicator{display:flex;align-items:center;gap:.45rem;margin-bottom:1.4rem;flex-wrap:wrap}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
+.step-dot.active{background:var(--gold);color:var(--navy)}
+.step-dot.done{background:rgba(232,137,26,.2);color:var(--gold)}
+.step-dot.inactive{background:rgba(255,255,255,.1);color:rgba(255,255,255,.4)}
+.step-line{flex:1;height:1px;background:rgba(255,255,255,.1);min-width:16px}
+.step-form{display:none}
+.step-form.active{display:block}
+#share-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1.4rem;margin-top:1.4rem;display:none;text-align:center}
+#share-box h4{font-family:var(--font-serif);font-size:1.15rem;color:var(--white);margin-bottom:.4rem}
+#share-box p{font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:.9rem}
+.share-link-row{display:flex;gap:.45rem;align-items:center}
+.share-link-input{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.58rem .88rem;color:var(--white);font-size:.83rem;font-family:var(--font-sans)}
+.btn-copy{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:.58rem .95rem;font-weight:700;font-size:.8rem;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-copy:hover{background:var(--gold2)}
 
-    .counter-wrap { display: grid; grid-template-columns: .95fr 1.05fr; gap: 18px; }
-    .counter-box {
-      display: grid; gap: 16px;
-    }
-    .counter-value { font-size: clamp(42px, 8vw, 76px); line-height: .95; letter-spacing: -.04em; margin: 0; }
-    .counter-sub { font-size: 16px; color: var(--muted); }
-    .list-toolbar {
-      display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap;
-    }
-    .supporter-list {
-      border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #fff;
-    }
-    .supporter-row {
-      display: grid; grid-template-columns: 1.3fr 1fr .8fr; gap: 12px; padding: 14px 16px; border-top: 1px solid var(--line); align-items: center;
-    }
-    .supporter-row:first-child { border-top: 0; }
-    .supporter-name { font-weight: 700; }
-    .supporter-role { color: var(--muted); font-size: 14px; }
+/* QUESTIONNAIRE */
+.q-intro{background:var(--navy);border-radius:var(--radius-lg);padding:2.25rem;color:var(--white);margin-bottom:1.75rem}
+.q-intro h3{font-family:var(--font-serif);font-size:1.5rem;margin-bottom:.45rem}
+.q-intro p{font-size:.88rem;color:rgba(255,255,255,.62);margin-bottom:.9rem}
+.q-level-tabs{display:flex;gap:.65rem;flex-wrap:wrap}
+.q-tab{padding:.45rem 1rem;border-radius:99px;font-size:.8rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);background:transparent;transition:.2s}
+.q-tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.q-section-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+.q-section-wrap h4{font-weight:700;font-size:.97rem;color:var(--navy);margin-bottom:.9rem;display:flex;align-items:center;gap:.45rem}
+.q-section-wrap h4::before{content:'';width:4px;height:16px;background:var(--gold);border-radius:2px;display:inline-block;flex-shrink:0}
+.q-question{margin-bottom:1.15rem}
+.q-question label{font-size:.85rem;font-weight:600;color:var(--text);display:block;margin-bottom:.35rem}
+.q-question p{font-size:.78rem;color:var(--muted);margin-bottom:.45rem}
+.q-question input,.q-question select,.q-question textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:.62rem .88rem;font-size:.86rem;font-family:var(--font-sans);color:var(--text);background:var(--cream);outline:none;transition:border .2s}
+.q-question input:focus,.q-question select:focus,.q-question textarea:focus{border-color:var(--gold);background:var(--white)}
+.q-question textarea{resize:vertical;min-height:76px}
+.radio-group,.check-group{display:flex;flex-direction:column;gap:.45rem}
+.radio-opt{display:flex;align-items:center;gap:.55rem;font-size:.85rem;color:var(--text);cursor:pointer;padding:.38rem .55rem;border-radius:6px;transition:.15s}
+.radio-opt:hover{background:#F0F2F7}
+.radio-opt input{accent-color:var(--gold);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.scale-row{display:flex;align-items:center;gap:.7rem}
+.scale-row input[type=range]{flex:1;accent-color:var(--gold)}
+.scale-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:.2rem}
+.q-progress{height:4px;background:var(--border);border-radius:3px;margin-bottom:1.75rem;overflow:hidden}
+.q-progress-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .4s ease}
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem}
+.q-page-info{font-size:.8rem;color:var(--muted)}
+.level-2-badge{background:var(--gold-light);color:var(--gold);font-size:.7rem;padding:.18rem .5rem;border-radius:4px;font-weight:700}
 
-    .proposal-box {
-      display: grid; grid-template-columns: 1fr .9fr; gap: 18px;
-    }
-    .proposal-checklist { display: grid; gap: 12px; }
-    .check {
-      display: flex; gap: 10px; align-items: flex-start; color: var(--muted);
-    }
-    .check strong { color: var(--text); display: block; margin-bottom: 4px; }
-    .check-dot {
-      width: 24px; height: 24px; border-radius: 50%; background: #fff4e7; color: #b85d00; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; flex: 0 0 auto;
-    }
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1.75rem}
+.dash-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow)}
+.dash-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.3rem}
+.dash-val{font-family:var(--font-serif);font-size:1.9rem;color:var(--navy);line-height:1.1}
+.dash-change{font-size:.78rem;margin-top:.28rem;font-weight:600}
+.dash-up{color:var(--red-alert)}
+.dash-down{color:var(--green-safe)}
+.dash-tag{font-size:.7rem;font-weight:700;padding:.18rem .52rem;border-radius:4px;display:inline-block;margin-top:.3rem}
+.tag-danger{background:rgba(192,57,43,.12);color:var(--red-alert)}
+.tag-warn{background:rgba(232,137,26,.12);color:var(--gold)}
+.tag-ok{background:rgba(30,107,60,.1);color:var(--green-safe)}
+.chart-row{display:grid;grid-template-columns:3fr 2fr;gap:1.4rem;margin-bottom:1.75rem}
+.chart-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;box-shadow:var(--shadow)}
+.chart-title{font-weight:700;font-size:.93rem;color:var(--navy);margin-bottom:1.1rem}
+.chart-sub{font-size:.78rem;color:var(--muted);margin-top:-.7rem;margin-bottom:.9rem}
 
-    .dashboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .dash-card {
-      border-radius: 20px; padding: 18px; border: 1px solid var(--line); background: linear-gradient(180deg, #fff, #fbfbfc);
-    }
-    .dash-card span { color: var(--muted); font-size: 13px; }
-    .dash-card strong { display: block; margin-top: 10px; font-size: 28px; letter-spacing: -.02em; }
+/* LOSS BARS */
+.loss-chart{display:flex;flex-direction:column;gap:.7rem;margin-top:.45rem}
+.loss-row{display:flex;align-items:center;gap:10px}
+.loss-label{font-size:.76rem;color:var(--muted);width:100px;flex-shrink:0}
+.loss-bar-track{flex:1;height:22px;background:#F0F2F7;border-radius:4px;overflow:hidden;display:flex}
+.loss-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:700;color:var(--white)}
+.loss-seg.gse{background:var(--navy)}
+.loss-seg.taxpayer{background:var(--red-alert)}
+.loss-seg.btc{background:var(--gold)}
+.loss-legend{display:flex;gap:.9rem;font-size:.76rem;color:var(--muted);margin-top:.65rem;flex-wrap:wrap}
+.loss-leg-item{display:flex;align-items:center;gap:.3rem}
+.loss-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
 
-    .data-room-gate { display: flex; flex-direction: column; gap: 16px; }
-    .locked { color: var(--muted); }
-    .file-list { display: grid; gap: 10px; }
-    .file-item {
-      display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; border-radius: 16px; background: #fff; border: 1px solid var(--line);
-    }
-    .file-item small { display: block; color: var(--muted); margin-top: 4px; }
+/* SHARPE */
+.sharpe-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-top:.9rem}
+.sharpe-card{background:#F8F9FC;border-radius:8px;padding:.95rem;border:1px solid var(--border)}
+.sharpe-label{font-size:.73rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.22rem}
+.sharpe-val{font-family:var(--font-serif);font-size:1.35rem;color:var(--navy)}
+.sharpe-note{font-size:.73rem;color:var(--muted);margin-top:.18rem}
 
-    .contact-grid { display: grid; grid-template-columns: 1fr .95fr; gap: 18px; }
-    .footer { padding: 30px 0 60px; color: var(--muted); font-size: 14px; }
+/* API BANNER */
+.api-banner{background:var(--navy);border-radius:var(--radius-lg);padding:1.6rem 1.9rem;display:flex;align-items:center;justify-content:space-between;gap:1.4rem;flex-wrap:wrap}
+.api-text h4{font-family:var(--font-serif);font-size:1.05rem;color:var(--white);margin-bottom:.25rem}
+.api-text p{font-size:.8rem;color:rgba(255,255,255,.52)}
+.api-feeds{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.45rem}
+.feed-tag{font-size:.72rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.62);padding:.22rem .6rem;border-radius:4px}
+.btn-api{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:.65rem 1.3rem;font-weight:700;font-size:.83rem;cursor:pointer;white-space:nowrap;transition:.2s}
+.btn-api:hover{background:var(--gold2)}
 
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(17,24,39,.42); display: none; align-items: center; justify-content: center; z-index: 100;
-      padding: 18px;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal {
-      width: min(100%, 560px); max-height: min(90vh, 900px); overflow: auto;
-      background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 30px 80px rgba(17,24,39,.28);
-    }
-    .modal-head { display: flex; justify-content: space-between; gap: 14px; align-items: start; margin-bottom: 16px; }
-    .x { background: transparent; border: 0; font-size: 28px; line-height: 1; cursor: pointer; }
+/* BRIEFING */
+.brief-lede{background:var(--navy);border-radius:var(--radius-lg);padding:2.25rem;color:var(--white);margin-bottom:1.75rem}
+.brief-lede blockquote{font-family:var(--font-serif);font-size:1.35rem;line-height:1.5;color:var(--white);margin-bottom:.9rem;border-left:3px solid var(--gold);padding-left:1.1rem}
+.brief-lede p{font-size:.88rem;color:rgba(255,255,255,.62)}
+.brief-body{display:grid;grid-template-columns:2fr 1fr;gap:1.9rem;align-items:start}
+.brief-section{margin-bottom:1.75rem}
+.brief-section h4{font-weight:700;font-size:.97rem;color:var(--navy);margin-bottom:.65rem;border-bottom:2px solid var(--gold);padding-bottom:.35rem;display:inline-block}
+.brief-section p{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:.65rem}
+.brief-section ul{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.brief-section ul li{font-size:.86rem;color:var(--text);padding-left:1.05rem;position:relative;line-height:1.6}
+.brief-section ul li::before{content:'→';position:absolute;left:0;color:var(--gold);font-weight:700}
+.brief-aside{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;box-shadow:var(--shadow);position:sticky;top:76px}
+.aside-section{margin-bottom:1.35rem}
+.aside-section:last-child{margin-bottom:0}
+.aside-section h5{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.55rem;font-weight:700}
+.aside-item{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.83rem}
+.aside-item:last-child{border-bottom:none}
+.aside-item-label{color:var(--muted);font-size:.8rem}
+.aside-item-val{font-weight:700;color:var(--navy);font-size:.86rem}
+.contact-card{background:var(--gold-light);border:1px solid rgba(232,137,26,.2);border-radius:var(--radius);padding:1.1rem;margin-top:.9rem}
+.contact-card h5{font-size:.83rem;font-weight:700;color:var(--navy);margin-bottom:.25rem}
+.contact-card p{font-size:.78rem;color:var(--muted)}
+.contact-card a{color:var(--gold);font-weight:600;font-size:.83rem;text-decoration:none}
 
-    .small-list { display: grid; gap: 10px; padding-left: 18px; color: var(--muted); }
-    .hidden { display: none !important; }
+/* FHFA AUTHORITY BLOCK */
+.authority-block{background:linear-gradient(135deg,#0B1628 0%,#1a2a4a 100%);border:1px solid rgba(232,137,26,.25);border-radius:var(--radius-lg);padding:1.75rem;margin-bottom:1.4rem;color:var(--white)}
+.authority-icon{font-size:1.6rem;margin-bottom:.6rem;display:block}
+.authority-title{font-family:var(--font-serif);font-size:1.15rem;color:var(--white);margin-bottom:.5rem}
+.authority-body{font-size:.86rem;color:rgba(255,255,255,.68);line-height:1.7}
+.authority-tag{display:inline-block;background:rgba(232,137,26,.15);border:1px solid rgba(232,137,26,.3);color:var(--gold);font-size:.72rem;font-weight:700;padding:.22rem .65rem;border-radius:4px;letter-spacing:.04em;margin-top:.55rem}
 
-    @media (max-width: 1080px) {
-      .hero-grid, .counter-wrap, .proposal-box, .contact-grid { grid-template-columns: 1fr; }
-      .feature-grid, .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 760px) {
-      .nav { flex-wrap: wrap; padding: 14px 0; }
-      .nav-links { display: none; }
-      .hero-meta, .stake-grid, .feature-grid, .room-grid, .faq-grid, .dashboard-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
-      .supporter-row { grid-template-columns: 1fr; }
-      .section-head { align-items: start; }
-      h1 { font-size: 42px; }
-    }
-  </style>
+/* DACI METRICS */
+.daci-block{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;margin-bottom:1.4rem;box-shadow:var(--shadow)}
+.daci-title{font-family:var(--font-serif);font-size:1.1rem;color:var(--navy);margin-bottom:.35rem}
+.daci-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.1rem}
+.daci-metrics{display:flex;flex-wrap:wrap;gap:.55rem}
+.daci-chip{background:var(--navy);color:var(--gold);font-size:.78rem;font-weight:700;padding:.35rem .85rem;border-radius:99px;border:1px solid rgba(232,137,26,.2);white-space:nowrap}
+.daci-chip.highlight{background:var(--gold);color:var(--navy)}
+
+/* STRUCTURE COMPARE TABLE */
+.struct-table{width:100%;border-collapse:collapse;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:1.4rem;font-size:.85rem}
+.struct-table th{padding:.75rem 1rem;text-align:left;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.struct-table th:first-child{background:#F0F2F7;color:var(--muted)}
+.struct-table th.trad{background:#EEF0F5;color:var(--muted)}
+.struct-table th.qbr{background:var(--navy);color:var(--gold)}
+.struct-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);background:var(--white)}
+.struct-table tr:last-child td{border-bottom:none}
+.struct-table td.qbr-val{color:var(--green-safe);font-weight:700}
+.struct-table td.trad-val{color:var(--muted)}
+
+/* BCR CALCULATOR */
+.bcr-calc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+.bcr-calc-header{margin-bottom:1.5rem}
+.bcr-calc-title{font-family:var(--font-serif);font-size:1.2rem;color:var(--navy);margin-bottom:.25rem}
+.bcr-calc-sub{font-size:.82rem;color:var(--muted)}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+.calc-inputs{display:flex;flex-direction:column;gap:1.1rem}
+.calc-label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem}
+.calc-label{font-size:.8rem;font-weight:600;color:var(--text)}
+.calc-val-display{font-size:.85rem;font-weight:700;color:var(--gold);background:var(--gold-light);padding:.15rem .55rem;border-radius:4px}
+.calc-slider{width:100%;accent-color:var(--gold)}
+.calc-tick-row{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:.15rem}
+.calc-results{background:var(--navy);border-radius:var(--radius);padding:1.5rem}
+.calc-result-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);margin-bottom:1rem;font-weight:700}
+.calc-result-row{display:flex;justify-content:space-between;align-items:baseline;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.calc-result-row:last-child{border-bottom:none}
+.calc-result-label{font-size:.82rem;color:rgba(255,255,255,.6)}
+.calc-result-val{font-family:var(--font-serif);font-size:1.15rem;color:var(--white)}
+.bcr-score-row{background:rgba(232,137,26,.12);border:1px solid rgba(232,137,26,.25);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;display:flex;justify-content:space-between;align-items:center}
+.bcr-score-label{font-size:.78rem;color:var(--gold2);font-weight:700}
+.bcr-score-val{font-family:var(--font-serif);font-size:1.75rem;color:var(--gold);line-height:1}
+.bcr-score-sub{font-size:.68rem;color:rgba(255,255,255,.45);margin-top:.15rem}
+
+/* DATA ROOM */
+.data-room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.1rem;margin-bottom:2rem}
+.data-room-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.data-room-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold)}
+.data-room-icon{font-size:1.5rem;margin-bottom:.65rem;display:block}
+.data-room-title{font-weight:700;font-size:.97rem;color:var(--navy);margin-bottom:.35rem}
+.data-room-desc{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:.85rem}
+.data-room-tag{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-weight:700;padding:.2rem .6rem;border-radius:4px}
+.tag-restricted{background:rgba(192,57,43,.1);color:var(--red-alert)}
+.tag-member{background:rgba(30,107,60,.1);color:var(--green-safe)}
+.tag-free{background:var(--gold-light);color:var(--gold)}
+.access-banner{background:var(--navy);border-radius:var(--radius-lg);padding:2rem;text-align:center;color:var(--white);margin-top:1.5rem}
+.access-banner h4{font-family:var(--font-serif);font-size:1.25rem;margin-bottom:.45rem}
+.access-banner p{font-size:.86rem;color:rgba(255,255,255,.55);margin-bottom:1.25rem;max-width:480px;margin-left:auto;margin-right:auto}
+.access-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin:1.5rem 0}
+.access-tier{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:1.15rem;text-align:center}
+.access-tier-name{font-weight:700;font-size:.9rem;color:var(--white);margin-bottom:.25rem}
+.access-tier-price{font-family:var(--font-serif);font-size:1.5rem;color:var(--gold);margin-bottom:.35rem}
+.access-tier-desc{font-size:.75rem;color:rgba(255,255,255,.5)}
+
+/* INNOVATIONS */
+.innov-section{margin-bottom:2.5rem}
+.innov-section h3{font-family:var(--font-serif);font-size:1.25rem;color:var(--navy);margin-bottom:.5rem;padding-bottom:.35rem;border-bottom:2px solid var(--gold);display:inline-block}
+.innov-section p{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:.65rem}
+.innov-section ul{list-style:none;display:flex;flex-direction:column;gap:.4rem}
+.innov-section ul li{font-size:.86rem;color:var(--text);padding-left:1.1rem;position:relative}
+.innov-section ul li::before{content:'→';position:absolute;left:0;color:var(--gold);font-weight:700}
+.crt-table{width:100%;border-collapse:collapse;font-size:.84rem;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-top:.75rem}
+.crt-table th{background:var(--navy);color:var(--white);padding:.72rem 1rem;text-align:left;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase}
+.crt-table td{padding:.72rem 1rem;border-bottom:1px solid var(--border);background:var(--white)}
+.crt-table tr:last-child td{border-bottom:none}
+.crt-table td:nth-child(2){font-weight:700;color:var(--green-safe)}
+.crt-table td:nth-child(3){font-size:.8rem;color:var(--muted)}
+.fico-compare{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin:1rem 0}
+.fico-card{border-radius:var(--radius);padding:1.25rem;border:1px solid var(--border)}
+.fico-card.traditional{background:#F8F9FC}
+.fico-card.abcs{background:linear-gradient(135deg,#FDF3E0,#fff9f0);border-color:rgba(232,137,26,.25)}
+.fico-card-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.4rem;font-weight:700}
+.fico-card-title{font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:.5rem}
+.fico-card-items{list-style:none;display:flex;flex-direction:column;gap:.3rem}
+.fico-card-items li{font-size:.82rem;color:var(--muted);padding-left:.85rem;position:relative}
+.fico-card-items li::before{content:'•';position:absolute;left:0;color:var(--gold)}
+
+/* MISC */
+.separator{height:1px;background:var(--border);margin:1.75rem 0}
+.success-msg{background:#E8F5EB;border:1px solid rgba(30,107,60,.25);border-radius:10px;padding:.9rem 1.15rem;font-size:.86rem;color:var(--green-safe);display:none;margin-top:.7rem;font-weight:600}
+.error-msg{background:#FDEDED;border:1px solid rgba(192,57,43,.25);border-radius:10px;padding:.7rem .95rem;font-size:.8rem;color:var(--red-alert);display:none;margin-top:.45rem}
+.mismo-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(30,107,60,.1);border:1px solid rgba(30,107,60,.2);border-radius:6px;padding:.35rem .75rem;font-size:.78rem;color:var(--green-safe);font-weight:600;margin:.45rem 0}
+.fred-note{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:.35rem}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .brief-body{grid-template-columns:1fr}
+  .brief-aside{position:static}
+  .chart-row{grid-template-columns:1fr}
+  .calc-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero{padding:3rem 1.25rem}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .section{padding:3rem 1.25rem}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .supporters-counter{grid-template-columns:1fr 1fr}
+  .pilot-phases{grid-template-columns:1fr}
+  .form-row-2{grid-template-columns:1fr}
+  .sharpe-grid{grid-template-columns:1fr}
+  .access-tiers{grid-template-columns:1fr}
+  .fico-compare{grid-template-columns:1fr}
+}
+@media(max-width:400px){
+  .dash-grid{grid-template-columns:1fr}
+  .supporters-counter{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="shell nav">
-      <a class="brand" href="#top">
-        <span class="brand-mark"></span>
-        <span>Akkume</span>
-      </a>
-      <nav class="nav-links">
-        <a href="#proposal">Pilot Proposal</a>
-        <a href="#borrowers">Borrowers</a>
-        <a href="#institutions">Lenders / Investors / Servicers / Regulators</a>
-        <a href="#questionnaire">Questionnaire</a>
-        <a href="#dashboard">Akkume-ulate Bitcoin</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <div class="nav-actions">
-        <button class="btn btn-secondary" data-open-auth>Login</button>
-        <a class="btn btn-primary" href="#support">Support the Pilot</a>
-      </div>
-    </div>
-  </header>
 
-  <main id="top">
-    <section class="hero shell">
-      <div class="hero-grid">
-        <div>
-          <span class="eyebrow">Reserve Layer • Housing Finance • Pilot Proposal</span>
-          <h1>Redirect the largest credit system in the world.</h1>
-          <p class="lead">A rule change that embeds long-duration reserves into mortgage credit—creating a structural demand layer and a more resilient system. This structure and page architecture follow your uploaded outline for landing page, pilot proposal, supporter signup, borrower page, institutional page, questionnaire, dashboard, and contact. fileciteturn1file0</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#proposal">See Proposal</a>
-            <a class="btn btn-secondary" href="#support">Sign Up to Support</a>
-          </div>
-          <div class="hero-meta">
-            <div class="metric">
-              <span class="kicker">Supporters</span>
-              <strong id="heroSupporterCount">0</strong>
-            </div>
-            <div class="metric">
-              <span class="kicker">Public backers</span>
-              <strong id="heroPublicCount">0</strong>
-            </div>
-            <div class="metric">
-              <span class="kicker">Strategic focus</span>
-              <strong>FHFA + MISMO</strong>
-            </div>
-          </div>
-        </div>
-
-        <aside class="card gradient-card support-card" id="support">
-          <h2>Support the pilot</h2>
-          <p class="muted">Capture individual and company support, public or private backing, and active resource commitments.</p>
-          <form id="supportForm">
-            <div class="grid-2">
-              <input name="full_name" placeholder="Full name" required />
-              <input name="company" placeholder="Company or organization" />
-            </div>
-            <div class="grid-2">
-              <input name="email" type="email" placeholder="Email" required />
-              <input name="phone" type="tel" placeholder="Phone number" />
-            </div>
-            <div class="grid-2">
-              <select name="role" required>
-                <option value="">Select role</option>
-                <option>Borrower</option>
-                <option>Lender</option>
-                <option>Investor</option>
-                <option>Servicer</option>
-                <option>Regulator</option>
-                <option>Strategic Partner</option>
-                <option>Other</option>
-              </select>
-              <select name="visibility" required>
-                <option value="">Support visibility</option>
-                <option value="public">List publicly as a supporter</option>
-                <option value="private">Keep private, add to backer count</option>
-              </select>
-            </div>
-            <select name="help_type">
-              <option value="">How would you like to help?</option>
-              <option>Actively join the push</option>
-              <option>Pledge resources</option>
-              <option>Request briefing</option>
-              <option>Media / policy support</option>
-            </select>
-            <textarea name="notes" placeholder="How would you like to support or contribute?"></textarea>
-            <label class="checkbox"><input type="checkbox" name="signed_proposal" /> <span>I want to sign the proposal in support of the pilot and rule changes.</span></label>
-            <button class="btn btn-primary" type="submit">Submit support</button>
-            <div id="supportNotice" class="notice"></div>
-          </form>
-          <p class="tiny">After submit, users can copy a share link, appear publicly if selected, and be counted privately if not.</p>
-        </aside>
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo-mark" onclick="navigate('home')">
+      <div class="logo-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2L33 9.5V26.5L18 34L3 26.5V9.5L18 2Z" fill="#E8891A" fill-opacity=".15" stroke="#E8891A" stroke-width="1.5"/>
+          <text x="18" y="23" text-anchor="middle" font-family="serif" font-size="14" fill="#E8891A" font-weight="700">A</text>
+        </svg>
       </div>
-    </section>
-
-    <section class="section shell" id="proposal">
-      <div class="section-head">
-        <div>
-          <h2>Pilot proposal</h2>
-          <p>The proposal centers on a fixed-supply reserve framework to enhance mortgage credit resilience, reduce systemic risk, and support pilot upgrades to GSE guides, MISMO standards, and reserve asset classification. fileciteturn1file3</p>
-        </div>
-        <button class="btn btn-secondary" data-open-proposal>Open full proposal flow</button>
-      </div>
-      <div class="proposal-box">
-        <div class="card">
-          <div class="proposal-checklist">
-            <div class="check"><span class="check-dot">1</span><div><strong>Reserve layer, not collateral.</strong> Introduce Bitcoin as a non-collateral credit enhancement layer, closer to MI / CRT than a pledge-and-liquidate loan. fileciteturn1file3</div></div>
-            <div class="check"><span class="check-dot">2</span><div><strong>Dual-asset credit model.</strong> Transition mortgage credit toward a more resilient framework that combines traditional assets with a fixed-supply reserve layer. fileciteturn1file0</div></div>
-            <div class="check"><span class="check-dot">3</span><div><strong>Standards and infrastructure.</strong> Pilot changes to guides, loan tapes, data elements, and reserve asset classification. fileciteturn1file3</div></div>
-          </div>
-          <div class="pill-row">
-            <span class="pill">Reduce taxpayer exposure</span>
-            <span class="pill">First-loss BTC buffer</span>
-            <span class="pill">Replace PMI</span>
-            <span class="pill">Improve capital efficiency</span>
-            <span class="pill">Increase access safely</span>
-            <span class="pill">No looser underwriting</span>
-          </div>
-        </div>
-        <div class="card gradient-card">
-          <h3 style="margin-top:0">Sign the proposal</h3>
-          <p class="muted">Capture a simple supporter signature flow now, with a verified-signer upgrade later.</p>
-          <form id="proposalForm">
-            <div class="grid-2">
-              <input name="sig_name" placeholder="Full name" required />
-              <input name="sig_company" placeholder="Company" />
-            </div>
-            <div class="grid-2">
-              <input name="sig_email" type="email" placeholder="Email" required />
-              <select name="sig_type" required>
-                <option value="">Signer type</option>
-                <option>Individual supporter</option>
-                <option>Strategic partner</option>
-                <option>Institutional contact</option>
-              </select>
-            </div>
-            <label class="checkbox"><input type="checkbox" required /> <span>I support the pilot proposal and proposed standards/rule changes.</span></label>
-            <button class="btn btn-primary" type="submit">Sign proposal</button>
-            <div id="proposalNotice" class="notice"></div>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <section class="section shell" id="borrowers">
-      <div class="section-head">
-        <div>
-          <h2>Borrower page</h2>
-          <p>Your borrower page vision centers on a simple emotional frame: “What if your mortgage built wealth instead of just debt?” plus a dual-asset model and lower taxpayer risk. fileciteturn1file0</p>
-        </div>
-      </div>
-      <div class="stake-grid">
-        <div class="card">
-          <h3>What if your mortgage built wealth instead of just debt?</h3>
-          <p class="muted">You pay for 30 years. You should have more to show for it. Introduce Bitcoin as a reserve layer reinforcing the credit system while lowering taxpayer risk in federally backed housing. fileciteturn1file0</p>
-        </div>
-        <div class="card">
-          <h3>Dual-asset credit model</h3>
-          <p class="muted">Pilot guidelines promote a transition to a dual-asset credit framework designed to boost resilience, modernize standards, and strengthen mortgage credit and affordability. fileciteturn1file0</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section shell" id="institutions">
-      <div class="section-head">
-        <div>
-          <h2>Lenders / investors / servicers / regulators</h2>
-          <p>The institutional page should argue that capital flows are being decided now, fragility is visible, and standards work can strengthen the system before losses become systemic. fileciteturn1file0turn1file2</p>
-        </div>
-      </div>
-      <div class="feature-grid">
-        <div class="card"><h3>Where capital flows next</h3><p class="muted">A policy and standards window is open now.</p></div>
-        <div class="card"><h3>Non-collateral enhancement</h3><p class="muted">Reserve layer positioned like MI / CRT, not direct borrower collateral. fileciteturn1file3</p></div>
-        <div class="card"><h3>Loss absorption shift</h3><p class="muted">Your draft frames a lower taxpayer share and earlier loss absorption higher in the stack. fileciteturn1file2</p></div>
-        <div class="card"><h3>Proof of weakness</h3><p class="muted">FHA stress and lagged default waves make the case for targeted credit enhancement. fileciteturn1file2</p></div>
-      </div>
-    </section>
-
-    <section class="section shell" id="questionnaire">
-      <div class="section-head">
-        <div>
-          <h2>Questionnaire: data capture</h2>
-          <p>Structured intake for companies, allies, and stakeholders who want to support, brief, fund, partner, or be listed publicly.</p>
-        </div>
-      </div>
-      <div class="card">
-        <form id="questionnaireForm">
-          <div class="grid-3">
-            <input name="q_name" placeholder="Name" required />
-            <input name="q_company" placeholder="Company" />
-            <input name="q_title" placeholder="Title / role" />
-          </div>
-          <div class="grid-3">
-            <input name="q_email" type="email" placeholder="Email" required />
-            <input name="q_phone" placeholder="Phone" />
-            <select name="q_type">
-              <option value="">Stakeholder type</option>
-              <option>Borrower advocate</option>
-              <option>Lender</option>
-              <option>Investor</option>
-              <option>Servicer</option>
-              <option>Regulator / policy</option>
-              <option>Strategic partner</option>
-              <option>Media</option>
-            </select>
-          </div>
-          <div class="grid-2">
-            <select name="q_interest">
-              <option value="">Primary interest</option>
-              <option>Pilot participation</option>
-              <option>Standards / MISMO</option>
-              <option>Data / analytics</option>
-              <option>Capital / treasury strategy</option>
-              <option>Public support</option>
-            </select>
-            <select name="q_resources">
-              <option value="">Resources available</option>
-              <option>Policy access</option>
-              <option>Distribution / audience</option>
-              <option>Capital</option>
-              <option>Technical build help</option>
-              <option>Research / data</option>
-            </select>
-          </div>
-          <textarea name="q_notes" placeholder="What would make you lean in? What can you contribute? What would you want to review first?"></textarea>
-          <button class="btn btn-primary" type="submit">Submit questionnaire</button>
-          <div id="questionnaireNotice" class="notice"></div>
-        </form>
-      </div>
-    </section>
-
-    <section class="section shell" id="supporters">
-      <div class="section-head">
-        <div>
-          <h2>Live supporter counter + public supporter list</h2>
-          <p>This section turns the site into a coalition engine: public supporters are listed, private supporters increase the visible total, and strategic partners can be separated later.</p>
-        </div>
-        <button class="btn btn-secondary" id="shareButton">Copy share link</button>
-      </div>
-      <div class="counter-wrap">
-        <div class="card gradient-card counter-box">
-          <div>
-            <div class="kicker">Founding coalition</div>
-            <p class="counter-value" id="supporterCount">0</p>
-            <div class="counter-sub">Supporters who signed, backed, or requested to actively participate</div>
-          </div>
-          <div>
-            <div class="kicker">Public supporters</div>
-            <p class="counter-value" style="font-size:42px" id="publicSupporterCount">0</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="list-toolbar">
-            <strong>Public supporters</strong>
-            <span class="muted" id="supporterRefreshNote">Loading…</span>
-          </div>
-          <div id="supporterList" class="supporter-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section shell" id="dashboard">
-      <div class="section-head">
-        <div>
-          <h2>Akkume-ulate Bitcoin</h2>
-          <p>Your dashboard vision includes Bitcoin-backed loans, enhanced mortgages, backed homes, ABS, enhanced bonds, and rated MBS/ABS views. fileciteturn1file1turn1file2</p>
-        </div>
-      </div>
-      <div class="dashboard-grid">
-        <div class="dash-card"><span>Bitcoin backed loans</span><strong>Rates</strong></div>
-        <div class="dash-card"><span>Bitcoin enhanced mortgages</span><strong>HODL Buffer</strong></div>
-        <div class="dash-card"><span>Bitcoin backed homes</span><strong>Rates</strong></div>
-        <div class="dash-card"><span>Bitcoin ABS</span><strong>Coupon</strong></div>
-        <div class="dash-card"><span>Enhanced loans</span><strong>Downpayment</strong></div>
-        <div class="dash-card"><span>Rated Bitcoin ABS</span><strong>Size / Rating</strong></div>
-        <div class="dash-card"><span>Bitcoin enhanced bonds</span><strong>Coupon</strong></div>
-        <div class="dash-card"><span>Rated Bitcoin MBS</span><strong>Size / Rating</strong></div>
-      </div>
-    </section>
-
-    <section class="section shell" id="dataroom">
-      <div class="section-head">
-        <div>
-          <h2>Login + data room</h2>
-          <p>Phase 1 uses email magic-link login. After login, members can view the proposal, charts, private briefing files, and strategic partner material.</p>
-        </div>
-        <button class="btn btn-primary" data-open-auth id="gateAction">Login to access</button>
-      </div>
-      <div class="room-grid">
-        <div class="card data-room-gate">
-          <div class="locked" id="authStateText">Not logged in. Login required to view protected files.</div>
-          <div class="file-list" id="dataRoomFiles">
-            <div class="file-item"><div><strong>Pilot proposal deck</strong><small>Private PDF / deck link</small></div><span>Locked</span></div>
-            <div class="file-item"><div><strong>FHFA / MISMO briefing memo</strong><small>Policy memo</small></div><span>Locked</span></div>
-            <div class="file-item"><div><strong>Loss absorption visuals</strong><small>Charts and board graphics</small></div><span>Locked</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <h3 style="margin-top:0">How to wire the data room</h3>
-          <ul class="small-list">
-            <li>Create a Supabase <strong>Auth</strong> magic-link login.</li>
-            <li>Create a <strong>profiles</strong> table with role and access level.</li>
-            <li>Store files in <strong>Supabase Storage</strong> or link private folders.</li>
-            <li>Show download links only when a session exists.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="section shell" id="contact">
-      <div class="section-head">
-        <div>
-          <h2>Contact</h2>
-          <p>Your draft includes a contact page. The cleanest setup is a domain email like <strong>hello@akkume.com</strong>, <strong>support@akkume.com</strong>, and <strong>partners@akkume.com</strong>.</p>
-        </div>
-      </div>
-      <div class="contact-grid">
-        <div class="card">
-          <h3 style="margin-top:0">Recommended inboxes</h3>
-          <div class="pill-row" style="margin-top:0">
-            <span class="pill">hello@akkume.com</span>
-            <span class="pill">support@akkume.com</span>
-            <span class="pill">partners@akkume.com</span>
-            <span class="pill">press@akkume.com</span>
-          </div>
-          <p class="muted">For setup, buy custom-domain email from Namecheap Private Email, Google Workspace, or Zoho Mail. Namecheap confirms Private Email is a separate product from hosting, and Google Workspace and Zoho both support custom business email on your own domain. ([namecheap.com](https://www.namecheap.com/hosting/email/?utm_source=chatgpt.com))</p>
-          <ul class="small-list">
-            <li><strong>Easiest:</strong> Namecheap Private Email, because your domain is already there. Namecheap says you do not need a web hosting plan to use it. ([namecheap.com](https://www.namecheap.com/hosting/email/?utm_source=chatgpt.com))</li>
-            <li><strong>Best if you want Gmail:</strong> Google Workspace with your domain. ([workspace.google.com](https://workspace.google.com/solutions/business-email/?utm_source=chatgpt.com))</li>
-            <li><strong>Lean alternative:</strong> Zoho Mail for custom domain inboxes. ([zoho.com](https://www.zoho.com/mail/custom-domain-email.html?utm_source=chatgpt.com))</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3 style="margin-top:0">Contact form</h3>
-          <form id="contactForm">
-            <input name="contact_name" placeholder="Name" required />
-            <input name="contact_email" type="email" placeholder="Email" required />
-            <input name="contact_company" placeholder="Company" />
-            <textarea name="contact_message" placeholder="How can we help?"></textarea>
-            <button class="btn btn-primary" type="submit">Send inquiry</button>
-            <div id="contactNotice" class="notice"></div>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer shell">
-    Akkume — fixed-supply reserve framework for housing finance.
-  </footer>
-
-  <div class="modal-backdrop" id="authModal">
-    <div class="modal">
-      <div class="modal-head">
-        <div>
-          <h3 style="margin:0 0 6px">Login</h3>
-          <div class="muted">Use a magic link to access the data room.</div>
-        </div>
-        <button class="x" data-close-auth>&times;</button>
-      </div>
-      <form id="authForm">
-        <input type="email" name="auth_email" placeholder="Email" required />
-        <button class="btn btn-primary" type="submit">Send magic link</button>
-        <div id="authNotice" class="notice"></div>
-      </form>
-    </div>
+      <span class="logo-text">Akkume</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#" id="nav-home" onclick="navigate('home')">Home</a></li>
+      <li><a href="#" id="nav-briefing" onclick="navigate('briefing')">Pulte Briefing</a></li>
+      <li><a href="#" id="nav-proposal" onclick="navigate('proposal')">Pilot Proposal</a></li>
+      <li><a href="#" id="nav-dashboard" onclick="navigate('dashboard')">Dashboard</a></li>
+      <li><a href="#" id="nav-questionnaire" onclick="navigate('questionnaire')">Survey</a></li>
+      <li><a href="#" id="nav-dataroom" onclick="navigate('dataroom')">Data Room</a></li>
+      <li><a href="#" id="nav-innovations" onclick="navigate('innovations')" class="nav-cta">Innovations</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+</nav>
 
-  <div class="modal-backdrop" id="proposalModal">
-    <div class="modal">
-      <div class="modal-head">
-        <div>
-          <h3 style="margin:0 0 6px">Proposal summary</h3>
-          <div class="muted">Use this as the first structured flow before a full downloadable brief.</div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="navigate('home');toggleMobile()">Home</a>
+  <a href="#" onclick="navigate('briefing');toggleMobile()">Pulte Briefing</a>
+  <a href="#" onclick="navigate('proposal');toggleMobile()">Pilot Proposal</a>
+  <a href="#" onclick="navigate('dashboard');toggleMobile()">Live Dashboard</a>
+  <a href="#" onclick="navigate('questionnaire');toggleMobile()">Industry Survey</a>
+  <a href="#" onclick="navigate('dataroom');toggleMobile()">Data Room</a>
+  <a href="#" onclick="navigate('innovations');toggleMobile()">Innovations</a>
+</div>
+
+<!-- ═══════════════════════ HOME ═══════════════════════ -->
+<div id="tab-home" class="tab-section active">
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">FHFA Pilot Proposal · 2026</div>
+        <h1>The Mortgage System Needs a <em>Shock Absorber.</em><br>Bitcoin Is It.</h1>
+        <p class="hero-sub">Akkume is proposing a borrower-funded, restricted Bitcoin reserve layer—embedded at origination as first-loss protection before lenders, guarantees, or taxpayers absorb losses.</p>
+        <div class="hero-btns">
+          <a href="#" class="btn-primary" onclick="navigate('proposal')">Support the Pilot</a>
+          <a href="#" class="btn-outline" onclick="navigate('briefing')">Read the Briefing</a>
         </div>
-        <button class="x" data-close-proposal>&times;</button>
+        <div class="hero-stats">
+          <div class="stat-box"><span class="stat-num">$12T+</span><span class="stat-label">U.S. Mortgage Market</span></div>
+          <div class="stat-box"><span class="stat-num">11.52%</span><span class="stat-label">FHA Delinquency Rate</span></div>
+          <div class="stat-box"><span class="stat-num">$150M</span><span class="stat-label">Proposed Pilot Size</span></div>
+        </div>
       </div>
-      <ul class="small-list">
-        <li>Embed a long-duration reserve layer into mortgage credit.</li>
-        <li>Standardize reserve classification through MISMO and pilot guide changes.</li>
-        <li>Reduce taxpayer exposure while improving credit structure resilience.</li>
-        <li>Create visible coalition support from borrowers, lenders, investors, servicers, regulators, and partners.</li>
-      </ul>
-      <a href="#support" class="btn btn-primary" data-close-proposal>Support the pilot</a>
-    </div>
-  </div>
-
-  <!--
-    AKKUME SETUP NOTES
-    1) Replace the placeholders below with your real Supabase values.
-    2) Create three tables in Supabase:
-       supporters(full_name, company, email, phone, role, visibility, help_type, notes, signed_proposal, created_at)
-       proposal_signers(name, company, email, signer_type, created_at)
-       contact_inquiries(name, email, company, message, created_at)
-    3) Optional questionnaire table:
-       questionnaires(name, company, title, email, phone, stakeholder_type, primary_interest, resources, notes, created_at)
-    4) Enable INSERT policies for public forms, and SELECT for public supporter count/list if desired.
-    5) For data room login, enable Supabase Auth (email magic link).
-  -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = "YOUR_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-    const USE_SUPABASE = !SUPABASE_URL.includes("YOUR_") && !SUPABASE_ANON_KEY.includes("YOUR_");
-    const supabaseClient = USE_SUPABASE ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-    const $ = (id) => document.getElementById(id);
-    const supportNotice = $("supportNotice");
-    const proposalNotice = $("proposalNotice");
-    const questionnaireNotice = $("questionnaireNotice");
-    const contactNotice = $("contactNotice");
-    const authNotice = $("authNotice");
-
-    function showNotice(el, message, ok = true) {
-      el.className = `notice ${ok ? 'ok' : 'err'}`;
-      el.textContent = message;
-    }
-
-    function clearNotice(el) {
-      el.className = 'notice';
-      el.textContent = '';
-    }
-
-    function shareSite() {
-      const url = window.location.origin;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => alert('Share link copied.'));
-      } else {
-        window.prompt('Copy this link:', url);
-      }
-    }
-
-    $("shareButton").addEventListener('click', shareSite);
-
-    document.querySelectorAll('[data-open-auth]').forEach(btn => btn.addEventListener('click', () => $('authModal').classList.add('open')));
-    document.querySelectorAll('[data-close-auth]').forEach(btn => btn.addEventListener('click', () => $('authModal').classList.remove('open')));
-    document.querySelectorAll('[data-open-proposal]').forEach(btn => btn.addEventListener('click', () => $('proposalModal').classList.add('open')));
-    document.querySelectorAll('[data-close-proposal]').forEach(btn => btn.addEventListener('click', () => $('proposalModal').classList.remove('open')));
-
-    async function loadSupporters() {
-      const list = $('supporterList');
-      if (!USE_SUPABASE) {
-        list.innerHTML = `<div class="supporter-row"><div><div class="supporter-name">Preview mode</div><div class="supporter-role">Connect Supabase to load real supporters</div></div><div class="muted">Akkume</div><div class="muted">public</div></div>`;
-        $('supporterCount').textContent = '0';
-        $('heroSupporterCount').textContent = '0';
-        $('publicSupporterCount').textContent = '0';
-        $('heroPublicCount').textContent = '0';
-        $('supporterRefreshNote').textContent = 'Preview mode';
-        return;
-      }
-
-      const { count: totalCount } = await supabaseClient
-        .from('supporters')
-        .select('*', { count: 'exact', head: true });
-
-      const { data: publicSupporters, count: publicCount } = await supabaseClient
-        .from('supporters')
-        .select('full_name, company, role, visibility, created_at', { count: 'exact' })
-        .eq('visibility', 'public')
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      $('supporterCount').textContent = totalCount || 0;
-      $('heroSupporterCount').textContent = totalCount || 0;
-      $('publicSupporterCount').textContent = publicCount || 0;
-      $('heroPublicCount').textContent = publicCount || 0;
-      $('supporterRefreshNote').textContent = 'Live';
-
-      if (!publicSupporters || publicSupporters.length === 0) {
-        list.innerHTML = `<div class="supporter-row"><div><div class="supporter-name">No public supporters yet</div><div class="supporter-role">The first visible backers will appear here.</div></div><div></div><div></div></div>`;
-        return;
-      }
-
-      list.innerHTML = publicSupporters.map(item => `
-        <div class="supporter-row">
-          <div>
-            <div class="supporter-name">${item.full_name || 'Supporter'}</div>
-            <div class="supporter-role">${item.role || 'Supporter'}</div>
+      <div class="hero-visual">
+        <div class="alert-card">
+          <div class="alert-header">
+            <div class="alert-icon">⚠</div>
+            <div><div style="font-weight:700;font-size:.93rem">FHA Delinquency Alert</div><div style="font-size:.75rem;color:rgba(255,255,255,.5)">Feb 2026 · FRED / MBA Data</div></div>
           </div>
-          <div class="muted">${item.company || ''}</div>
-          <div class="muted">Public</div>
+          <div class="alert-stat">11.52%</div>
+          <div class="alert-desc">FHA loans running at near double-digit distress. Late-stage delinquencies rising. 60-day and 90-day buckets accelerating.</div>
+          <div class="delinq-bars">
+            <div class="dbar"><span class="dbar-label">FHA</span><div class="dbar-track"><div class="dbar-fill" style="width:96%;background:#E85B4B"></div></div><span class="dbar-val">11.52%</span></div>
+            <div class="dbar"><span class="dbar-label">VA</span><div class="dbar-track"><div class="dbar-fill" style="width:38%;background:#E8891A"></div></div><span class="dbar-val">4.60%</span></div>
+            <div class="dbar"><span class="dbar-label">Conv.</span><div class="dbar-track"><div class="dbar-fill" style="width:24%;background:#4A8FC1"></div></div><span class="dbar-val">2.89%</span></div>
+          </div>
         </div>
-      `).join('');
-    }
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem">
+          <div class="mini-card"><div><div class="mini-label">Delinquency Rate</div><div class="mini-val">4.26%</div></div><span class="mini-badge badge-red">4yr High</span></div>
+          <div class="mini-card"><div><div class="mini-label">Serious Delinq.</div><div class="mini-val">1.85%</div></div><span class="mini-badge badge-orange">↑ Rising</span></div>
+        </div>
+        <div style="font-size:.71rem;color:rgba(255,255,255,.35);text-align:right;margin-top:.2rem">Source: FRED/MBA Q4 2025 · Updated Feb 24, 2026</div>
+      </div>
+    </div>
+  </section>
 
-    async function insertRow(table, payload) {
-      if (!USE_SUPABASE) return { error: null };
-      return supabaseClient.from(table).insert([payload]);
-    }
+  <section class="section" style="background:var(--white)">
+    <div class="section-inner">
+      <div class="section-tag">The Structural Gap</div>
+      <h2 class="section-title">No Loan-Level Buffer Exists Today</h2>
+      <p class="section-sub">The U.S. mortgage system operates on fragile collateral, thin margins, and taxpayer backstops. Akkume changes that—without subsidies or overhaul.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem">
+        <div class="prop-block" style="margin-bottom:0"><div class="prop-num">1</div><div class="prop-title">Reserve Layer, Not Collateral</div><p class="prop-body">Bitcoin functions as a non-collateral credit enhancement layer—closer to MI/CRT than a pledge-and-liquidate loan structure.</p></div>
+        <div class="prop-block" style="margin-bottom:0"><div class="prop-num">2</div><div class="prop-title">Dual-Asset Credit Model</div><p class="prop-body">Transition mortgage credit toward a resilient framework combining traditional assets with a fixed-supply reserve layer.</p></div>
+        <div class="prop-block" style="margin-bottom:0"><div class="prop-num">3</div><div class="prop-title">Standards & Infrastructure</div><p class="prop-body">Pilot changes to GSE guides, loan tapes, data elements, and reserve asset classification via MISMO standards.</p></div>
+      </div>
+      <div class="mismo-badge" style="margin-top:1.35rem">✓ MISMO has expressed interest in exploring incorporation into existing data standards and reporting frameworks</div>
+    </div>
+  </section>
 
-    $('supportForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearNotice(supportNotice);
-      const fd = new FormData(e.target);
-      const payload = {
-        full_name: fd.get('full_name'),
-        company: fd.get('company'),
-        email: fd.get('email'),
-        phone: fd.get('phone'),
-        role: fd.get('role'),
-        visibility: fd.get('visibility'),
-        help_type: fd.get('help_type'),
-        notes: fd.get('notes'),
-        signed_proposal: fd.get('signed_proposal') === 'on'
-      };
-      const { error } = await insertRow('supporters', payload);
-      if (error) {
-        console.error(error);
-        showNotice(supportNotice, 'There was a problem saving your support.', false);
-        return;
-      }
-      showNotice(supportNotice, 'Thank you. You are now part of the Akkume founding coalition.');
-      e.target.reset();
-      loadSupporters();
-    });
+  <section class="section">
+    <div class="section-inner" style="text-align:center">
+      <div class="section-tag">Validated Quickly. Reversible Entirely.</div>
+      <h2 class="section-title">A Fully Reversible FHFA Pilot</h2>
+      <p class="section-sub" style="margin:0 auto 2.25rem">No policy overhaul. No loosened standards. Measured against control cohorts.</p>
+      <div class="pilot-phases">
+        <div class="phase-card"><div class="phase-amt">$150M</div><div class="phase-label">Phase 1 — Loan Level</div><div class="phase-tag">90 Days</div></div>
+        <div class="phase-card"><div class="phase-amt">$2B</div><div class="phase-label">Phase 2 — System Level</div><div class="phase-tag">Measured vs Control</div></div>
+        <div class="phase-card"><div class="phase-amt">$12T+</div><div class="phase-label">Phase 3 — Full Market</div><div class="phase-tag">GSE Standard</div></div>
+      </div>
+      <div style="margin-top:1.75rem;display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap">
+        <a href="#" class="btn-primary" onclick="navigate('proposal')">Read the Full Proposal</a>
+        <a href="#" class="btn-outline" style="color:var(--navy);border-color:var(--border)" onclick="navigate('proposal')">Sign to Support</a>
+      </div>
+    </div>
+  </section>
+</div>
 
-    $('proposalForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearNotice(proposalNotice);
-      const fd = new FormData(e.target);
-      const payload = {
-        name: fd.get('sig_name'),
-        company: fd.get('sig_company'),
-        email: fd.get('sig_email'),
-        signer_type: fd.get('sig_type')
-      };
-      const { error } = await insertRow('proposal_signers', payload);
-      if (error) {
-        console.error(error);
-        showNotice(proposalNotice, 'Could not save proposal signature.', false);
-        return;
-      }
-      showNotice(proposalNotice, 'Proposal signature saved.');
-      e.target.reset();
-    });
+<!-- ═══════════════════════ PULTE BRIEFING ═══════════════════════ -->
+<div id="tab-briefing" class="tab-section">
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-tag">Director Bill Pulte · FHFA</div>
+      <h2 class="section-title">Pulte Briefing</h2>
+      <div class="brief-lede">
+        <blockquote>"Add a shock absorber to the largest credit system in the world—before the next stress cycle hits."</blockquote>
+        <p>Director Pulte — the mortgage system has a structural gap. There is no loan-level, borrower-funded buffer to absorb losses before they hit lenders or taxpayers. Akkume is proposing a fully reversible FHFA pilot that adds one—without changing underwriting.</p>
+      </div>
+      <div class="brief-body">
+        <div>
+          <!-- FHFA CONSERVATORSHIP AUTHORITY -->
+          <div class="authority-block">
+            <span class="authority-icon">🏛️</span>
+            <div class="authority-title">FHFA Conservatorship Authority</div>
+            <p class="authority-body">Director Pulte can authorize a pilot through GSE conservatorship powers — no act of Congress required for Phase 1. This is the fastest viable entry point into the $12 trillion mortgage system. The conservatorship authority provides a direct runway to test the reserve layer at loan level before any regulatory rulemaking is required.</p>
+            <span class="authority-tag">No Congressional Action Required for Phase 1</span>
+          </div>
 
-    $('questionnaireForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearNotice(questionnaireNotice);
-      const fd = new FormData(e.target);
-      const payload = {
-        name: fd.get('q_name'),
-        company: fd.get('q_company'),
-        title: fd.get('q_title'),
-        email: fd.get('q_email'),
-        phone: fd.get('q_phone'),
-        stakeholder_type: fd.get('q_type'),
-        primary_interest: fd.get('q_interest'),
-        resources: fd.get('q_resources'),
-        notes: fd.get('q_notes')
-      };
-      const { error } = await insertRow('questionnaires', payload);
-      if (error) {
-        console.error(error);
-        showNotice(questionnaireNotice, 'Could not submit questionnaire.', false);
-        return;
-      }
-      showNotice(questionnaireNotice, 'Questionnaire submitted.');
-      e.target.reset();
-    });
+          <div class="brief-section">
+            <h4>The Core Mechanism</h4>
+            <p>At origination, a borrower allocates 5–15% into a restricted Bitcoin reserve, held with a qualified third-party custodian. In distress, it absorbs losses <strong>before foreclosure, before guarantees, before Treasury exposure.</strong></p>
+            <p>This is not new credit risk—it is a new first-loss layer. It converts the down payment from a sunk cost into a compounding reserve, reduces loss severity, and improves GSE economics.</p>
+          </div>
 
-    $('contactForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearNotice(contactNotice);
-      const fd = new FormData(e.target);
-      const payload = {
-        name: fd.get('contact_name'),
-        email: fd.get('contact_email'),
-        company: fd.get('contact_company'),
-        message: fd.get('contact_message')
-      };
-      const { error } = await insertRow('contact_inquiries', payload);
-      if (error) {
-        console.error(error);
-        showNotice(contactNotice, 'Could not send inquiry.', false);
-        return;
-      }
-      showNotice(contactNotice, 'Inquiry sent.');
-      e.target.reset();
-    });
+          <div class="brief-section">
+            <h4>What FHFA Can Do</h4>
+            <ul>
+              <li>Authorize a rule-level pilot under conservatorship authority — no Congressional action needed for Phase 1</li>
+              <li>Fulfill the FHFA safety &amp; soundness mandate and mission by adding a private first-loss layer ahead of GSE exposure</li>
+              <li>Measure against control cohorts over 90 days at the loan level ($150M pilot)</li>
+              <li>Expand to system-level $2B phase with validated data</li>
+            </ul>
+          </div>
 
-    $('authForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearNotice(authNotice);
-      if (!USE_SUPABASE) {
-        showNotice(authNotice, 'Add Supabase keys first, then enable Auth > Email magic links.', false);
-        return;
-      }
-      const email = new FormData(e.target).get('auth_email');
-      const { error } = await supabaseClient.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: window.location.origin }
-      });
-      if (error) {
-        console.error(error);
-        showNotice(authNotice, 'Could not send magic link.', false);
-        return;
-      }
-      showNotice(authNotice, 'Magic link sent. Check your inbox.');
-    });
+          <!-- LOSS ABSORPTION CHART — after "What FHFA Can Do", before "Industry Alignment" -->
+          <div class="chart-wrap" style="margin-bottom:1.75rem">
+            <div class="chart-title">Loss Absorption: Before and After BTC Reserve Layer</div>
+            <div class="chart-sub">Bitcoin reserve absorbs first, shifting risk away from GSEs and taxpayers.</div>
+            <div class="loss-chart">
+              <div class="loss-row">
+                <span class="loss-label">Current System</span>
+                <div class="loss-bar-track">
+                  <div class="loss-seg gse" style="width:45%">GSE 45%</div>
+                  <div class="loss-seg taxpayer" style="width:55%">Taxpayer 55%</div>
+                </div>
+              </div>
+              <div class="loss-row" style="margin-top:.45rem">
+                <span class="loss-label">With BTC Reserve</span>
+                <div class="loss-bar-track">
+                  <div class="loss-seg btc" style="width:30%">BTC 30%</div>
+                  <div class="loss-seg gse" style="width:25%">GSE 25%</div>
+                  <div class="loss-seg taxpayer" style="width:10%">Tax 10%</div>
+                  <div class="loss-seg" style="width:35%;background:var(--green-safe)">Avoided 35%</div>
+                </div>
+              </div>
+            </div>
+            <div class="loss-legend">
+              <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--gold)"></span>BTC Reserve (first-loss)</span>
+              <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--navy)"></span>GSE exposure</span>
+              <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--red-alert)"></span>Taxpayer exposure</span>
+              <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--green-safe)"></span>Losses avoided</span>
+            </div>
+          </div>
 
-    async function syncAuthState() {
-      if (!USE_SUPABASE) return;
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data?.session?.user;
-      if (!user) return;
-      $('authStateText').textContent = `Logged in as ${user.email}`;
-      $('gateAction').textContent = 'Access granted';
-      const items = document.querySelectorAll('#dataRoomFiles .file-item span');
-      items.forEach(el => el.textContent = 'Available');
-    }
+          <div class="brief-section">
+            <h4>Industry Alignment</h4>
+            <p>MISMO has expressed interest in exploring how this framework can be incorporated into existing data standards and reporting. This gives the proposal a clear path to industry implementation beyond the pilot.</p>
+          </div>
 
-    loadSupporters();
-    syncAuthState();
-  </script>
+          <!-- DACI FRAMEWORK -->
+          <div class="daci-block">
+            <div class="daci-title">DACI Framework — 7 Metrics</div>
+            <div class="daci-sub">Digital Asset Credit Index — Akkume's proprietary system for evaluating Bitcoin-enhanced credit instruments</div>
+            <div class="daci-metrics">
+              <span class="daci-chip highlight">BCR™ — Bitcoin Coverage Ratio</span>
+              <span class="daci-chip">LTV-Adjusted</span>
+              <span class="daci-chip">Volatility Buffer</span>
+              <span class="daci-chip">Custody Score</span>
+              <span class="daci-chip">Income Resilience Index</span>
+              <span class="daci-chip">Appreciation Participation Rate</span>
+              <span class="daci-chip">Default Probability Delta</span>
+            </div>
+            <p style="font-size:.8rem;color:var(--muted);margin-top:.9rem;line-height:1.6">BCR™ is the centerpiece public-facing metric — a standardized measure of the Bitcoin reserve buffer relative to loan exposure. The full DACI framework powers the DigiDow™ index platform covering BitBonds, Bitcoin-enhanced MBS, and Bitcoin equity structures.</p>
+          </div>
+
+          <!-- CUSTODY STRUCTURE -->
+          <div class="authority-block" style="background:linear-gradient(135deg,#0d1e38 0%,#1a2f52 100%)">
+            <span class="authority-icon">🔐</span>
+            <div class="authority-title">Custody &amp; Safety Structure</div>
+            <p class="authority-body">BTC reserves are held in a qualified third-party custodian, segregated from both lender and borrower assets. Liquidation triggers are defined in the mortgage covenants. The custodial structure is bankruptcy-remote, regulated, and fully transparent to both the GSE and secondary market investors.</p>
+            <span class="authority-tag">Qualified Custodian · Segregated · Covenant-Defined Triggers</span>
+          </div>
+
+          <div class="brief-section">
+            <h4>Why Now</h4>
+            <ul>
+              <li>FHA delinquency running at 11.52% — a major stress signal (FRED/MBA, Feb 2026)</li>
+              <li>Serious delinquency up 36% year-over-year; 60-day and 90-day buckets accelerating</li>
+              <li>White-collar layoffs: 198K YTD across tech, finance, consulting</li>
+              <li>Workforce pressure building beneath stable headline employment numbers</li>
+              <li>2008 taught us to react after failure. 2026 offers a window to act before.</li>
+            </ul>
+          </div>
+          <div class="brief-section">
+            <h4>The Bottom Line</h4>
+            <p>Don't just finance homes. <strong>Fortify the system that finances them.</strong> This is the fastest way to add a shock absorber to the largest credit system in the world—before the next stress cycle hits.</p>
+          </div>
+          <div style="margin-top:1.4rem;display:flex;gap:.7rem;flex-wrap:wrap">
+            <a href="#" class="btn-primary" onclick="navigate('proposal')">Full Pilot Proposal</a>
+            <a href="#" class="btn-outline" style="color:var(--navy);border-color:var(--border)" onclick="navigate('dashboard')">Live Stress Dashboard</a>
+          </div>
+        </div>
+        <div class="brief-aside">
+          <div class="aside-section">
+            <h5>Pilot Parameters</h5>
+            <div class="aside-item"><span class="aside-item-label">Loan-Level Pilot</span><span class="aside-item-val">$150M</span></div>
+            <div class="aside-item"><span class="aside-item-label">System-Level Phase</span><span class="aside-item-val">$2B</span></div>
+            <div class="aside-item"><span class="aside-item-label">Duration</span><span class="aside-item-val">90 Days</span></div>
+            <div class="aside-item"><span class="aside-item-label">Reserve Allocation</span><span class="aside-item-val">5–15%</span></div>
+          </div>
+          <div class="aside-section">
+            <h5>Stress Indicators</h5>
+            <div class="aside-item"><span class="aside-item-label">FHA Delinquency</span><span class="aside-item-val" style="color:var(--red-alert)">11.52%</span></div>
+            <div class="aside-item"><span class="aside-item-label">Total Delinquency</span><span class="aside-item-val" style="color:var(--gold)">4.26%</span></div>
+            <div class="aside-item"><span class="aside-item-label">Serious Delinquent</span><span class="aside-item-val">1.85%</span></div>
+            <div class="aside-item"><span class="aside-item-label">In Foreclosure</span><span class="aside-item-val">0.53%</span></div>
+          </div>
+          <div class="aside-section">
+            <h5>Income Shock Signals</h5>
+            <div class="aside-item"><span class="aside-item-label">White-Collar Layoffs</span><span class="aside-item-val">198K</span></div>
+            <div class="aside-item"><span class="aside-item-label">AI/Tech Layoffs</span><span class="aside-item-val">45K</span></div>
+            <div class="aside-item"><span class="aside-item-label">YoY Serious Delinq.</span><span class="aside-item-val" style="color:var(--red-alert)">↑36%</span></div>
+          </div>
+          <div class="aside-section">
+            <h5>DACI Metrics</h5>
+            <div class="aside-item"><span class="aside-item-label">BCR™</span><span class="aside-item-val" style="color:var(--gold)">Centerpiece</span></div>
+            <div class="aside-item"><span class="aside-item-label">Framework</span><span class="aside-item-val">7 Metrics</span></div>
+          </div>
+          <div class="contact-card">
+            <h5>Request a Direct Briefing</h5>
+            <p style="margin:.25rem 0 .55rem">For FHFA staff and senior stakeholders</p>
+            <a href="mailto:briefing@akkume.com">briefing@akkume.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════ PILOT PROPOSAL ═══════════════════════ -->
+<div id="tab-proposal" class="tab-section">
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-tag">Pilot Proposal</div>
+      <h2 class="section-title">Building a Fixed-Supply Reserve Layer for U.S. Mortgage Finance</h2>
+      <p class="section-sub">Akkume is developing the Bitcoin reserve framework for the U.S. mortgage system—embedding borrower-funded, restricted first-loss protection to strengthen credit performance and reduce systemic risk.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start">
+        <div>
+          <div class="prop-block"><div class="prop-num">1</div><div class="prop-title">Reserve Layer, Not Collateral</div><p class="prop-body">Introduce Bitcoin as a non-collateral credit enhancement layer, closer to MI/CRT than a pledge-and-liquidate loan. The reserve absorbs losses before foreclosure, before guarantees, before Treasury exposure.</p></div>
+          <div class="prop-block"><div class="prop-num">2</div><div class="prop-title">Dual-Asset Credit Model</div><p class="prop-body">Transition mortgage credit toward a more resilient framework combining traditional assets with a fixed-supply reserve layer. Every mortgage becomes a long-duration Bitcoin accumulator, locking supply for 5–30 years.</p></div>
+          <div class="prop-block"><div class="prop-num">3</div><div class="prop-title">Standards &amp; Infrastructure</div><p class="prop-body">Pilot changes to GSE guides, loan tapes, data elements, and reserve asset classification. MISMO has expressed interest in incorporating this into existing data standards.</p></div>
+
+          <!-- HOW IT WORKS -->
+          <div class="prop-block" style="background:var(--gold-light);border-color:rgba(232,137,26,.25);margin-bottom:1.25rem">
+            <div style="font-weight:700;font-size:.95rem;color:var(--navy);margin-bottom:.45rem">How It Works</div>
+            <p style="font-size:.84rem;color:var(--muted);line-height:1.65">A restricted, transaction-linked reserve account is funded at closing. Borrower-funded · Custodied and locked · Long-duration · First-loss protective layer · Structured like a closing cost/credit enhancement expense · Non-consumptive, non-speculative, performance-aligned.</p>
+            <p style="margin-top:.65rem;font-size:.84rem;font-weight:700;color:var(--navy)">This is not leverage. This is resilience embedded into the loan itself.</p>
+          </div>
+
+          <!-- SHARPE RATIO — moved from Dashboard per request -->
+          <div class="prop-block" style="margin-bottom:1.25rem">
+            <div style="font-weight:700;font-size:.95rem;color:var(--navy);margin-bottom:.2rem">Sharpe Ratio Analysis — Bitcoin Risk Buffer Effect</div>
+            <p style="font-size:.8rem;color:var(--muted);margin-bottom:.75rem">Adding Bitcoin as a first-loss layer lowers volatility and makes capital use more efficient, improving the risk-adjusted return profile of the mortgage credit portfolio.</p>
+            <div class="sharpe-grid">
+              <div class="sharpe-card"><div class="sharpe-label">Portfolio Without Reserve</div><div class="sharpe-val">0.62</div><div class="sharpe-note">Standard mortgage credit portfolio</div></div>
+              <div class="sharpe-card"><div class="sharpe-label">Portfolio With BTC Reserve</div><div class="sharpe-val" style="color:var(--green-safe)">0.87</div><div class="sharpe-note">First-loss layer reduces volatility</div></div>
+              <div class="sharpe-card"><div class="sharpe-label">PMI Cost Reduction</div><div class="sharpe-val">~$150/mo</div><div class="sharpe-note">Per borrower at median loan</div></div>
+              <div class="sharpe-card"><div class="sharpe-label">ERCF Capital Relief</div><div class="sharpe-val">Est. 15–25%</div><div class="sharpe-note">Reduction in required capital</div></div>
+            </div>
+          </div>
+
+          <!-- FHFA AUTHORITY -->
+          <div class="authority-block" style="margin-bottom:1.25rem">
+            <span class="authority-icon">🏛️</span>
+            <div class="authority-title">FHFA Conservatorship Authority</div>
+            <p class="authority-body">Director Pulte can authorize a pilot through GSE conservatorship powers — no act of Congress required for Phase 1. This is the fastest viable entry point.</p>
+            <span class="authority-tag">No Congressional Action Required for Phase 1</span>
+          </div>
+          <div class="authority-block" style="background:linear-gradient(135deg,#0d1e38 0%,#1a2f52 100%);margin-bottom:0">
+            <span class="authority-icon">🔐</span>
+            <div class="authority-title">Custody &amp; Safety Structure</div>
+            <p class="authority-body">BTC reserves are held in a qualified third-party custodian, segregated from both lender and borrower assets. Liquidation triggers are defined in the mortgage covenants.</p>
+            <span class="authority-tag">Qualified Custodian · Segregated · Covenant-Defined Triggers</span>
+          </div>
+        </div>
+
+        <div>
+          <!-- STRUCTURE COMPARE TABLE -->
+          <div style="margin-bottom:1.5rem">
+            <div style="font-weight:700;font-size:.97rem;color:var(--navy);margin-bottom:.65rem">Loan Structure Comparison</div>
+            <table class="struct-table">
+              <thead>
+                <tr><th style="background:#F0F2F7;color:var(--muted)">Feature</th><th class="trad">Traditional</th><th class="qbr">Q-BR Structure</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Cash to Seller</td><td class="trad-val">100% of Down Payment</td><td class="qbr-val">Min. Req. Only</td></tr>
+                <tr><td>Reserve Buffer</td><td class="trad-val">None</td><td class="qbr-val">BCR™ — Growing</td></tr>
+                <tr><td>Lender Protection</td><td class="trad-val">PMI Only</td><td class="qbr-val">BCR™ + Upside Participation</td></tr>
+                <tr><td>First-Loss Layer</td><td class="trad-val">None (taxpayer)</td><td class="qbr-val">BTC Reserve Buffer</td></tr>
+                <tr><td>Borrower Upside</td><td class="trad-val">Home equity only</td><td class="qbr-val">BTC appreciation retained</td></tr>
+              </tbody>
+            </table>
+            <div style="font-size:.73rem;color:var(--muted);margin-top:.35rem;font-style:italic">Q-BR = Qualified Bitcoin Reserve. BCR™ = Bitcoin Coverage Ratio.</div>
+          </div>
+
+          <table class="objective-table" style="margin-bottom:1.5rem">
+            <thead><tr><th>FHFA Objective</th><th>Bitcoin Reserve Solution</th></tr></thead>
+            <tbody>
+              <tr><td>Reduce taxpayer exposure</td><td>First-loss BTC buffer</td></tr>
+              <tr><td>Lower borrower costs</td><td>Replace PMI</td></tr>
+              <tr><td>Improve capital efficiency</td><td>Reduce ERCF capital</td></tr>
+              <tr><td>Modernize system</td><td>Digital asset reserve layer</td></tr>
+              <tr><td>Increase access safely</td><td>Buffer without loosening underwriting</td></tr>
+              <tr><td>Safety &amp; soundness mandate</td><td>Private first-loss before GSE exposure</td></tr>
+            </tbody>
+          </table>
+
+          <div style="margin-bottom:1.5rem">
+            <div style="font-weight:700;font-size:.95rem;color:var(--navy);margin-bottom:.65rem">What This Changes</div>
+            <div style="display:flex;flex-direction:column;gap:.55rem">
+              <div style="display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span>Single-asset risk becomes dual-asset resilience</div>
+              <div style="display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span>Private first-loss buffer ahead of taxpayer exposure</div>
+              <div style="display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span>Improved loan performance and reduced loss severity</div>
+              <div style="display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span>Low-balance and manufactured housing loans become viable</div>
+              <div style="display:flex;align-items:flex-start;gap:.55rem;font-size:.85rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span>Stronger secondary market execution—without subsidies</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BCR CALCULATOR — full width -->
+      <div class="separator"></div>
+      <div class="section-tag">Interactive Tool</div>
+      <div class="bcr-calc">
+        <div class="bcr-calc-header">
+          <div class="bcr-calc-title">BCR™ — Bitcoin Coverage Ratio Calculator</div>
+          <div class="bcr-calc-sub">Model the reserve buffer for a Home&amp;HODL™ loan scenario. BCR™ = BTC Reserve Value ÷ Loan Exposure.</div>
+        </div>
+        <div class="calc-grid">
+          <div class="calc-inputs">
+            <div>
+              <div class="calc-label-row"><span class="calc-label">Home Price</span><span class="calc-val-display" id="hp-disp">$400,000</span></div>
+              <input type="range" class="calc-slider" min="150000" max="1000000" step="5000" value="400000" id="home-price" oninput="calcBCR()">
+              <div class="calc-tick-row"><span>$150K</span><span>$400K</span><span>$1M</span></div>
+            </div>
+            <div>
+              <div class="calc-label-row"><span class="calc-label">Down Payment (%)</span><span class="calc-val-display" id="dp-disp">20%</span></div>
+              <input type="range" class="calc-slider" min="3" max="25" step="1" value="20" id="down-pct" oninput="calcBCR()">
+              <div class="calc-tick-row"><span>3%</span><span>10%</span><span>25%</span></div>
+            </div>
+            <div>
+              <div class="calc-label-row"><span class="calc-label">BTC Reserve Allocation (% of Down Payment)</span><span class="calc-val-display" id="btc-alloc-disp">50%</span></div>
+              <input type="range" class="calc-slider" min="20" max="80" step="5" value="50" id="btc-alloc" oninput="calcBCR()">
+              <div class="calc-tick-row"><span>20%</span><span>50%</span><span>80%</span></div>
+            </div>
+            <div>
+              <div class="calc-label-row"><span class="calc-label">BTC Price Assumption</span><span class="calc-val-display" id="btc-price-disp">$95,000</span></div>
+              <input type="range" class="calc-slider" min="50000" max="500000" step="5000" value="95000" id="btc-price" oninput="calcBCR()">
+              <div class="calc-tick-row"><span>$50K</span><span>$95K</span><span>$500K</span></div>
+            </div>
+          </div>
+          <div class="calc-results">
+            <div class="calc-result-title">Loan Model Output</div>
+            <div class="calc-result-row"><span class="calc-result-label">Cash to Seller</span><span class="calc-result-val" id="cash-seller">$40,000</span></div>
+            <div class="calc-result-row"><span class="calc-result-label">BTC Reserve (USD)</span><span class="calc-result-val" id="btc-usd">$40,000</span></div>
+            <div class="calc-result-row"><span class="calc-result-label">BTC in Reserve</span><span class="calc-result-val" id="btc-amount">0.4211 ₿</span></div>
+            <div class="calc-result-row"><span class="calc-result-label">Loan Amount</span><span class="calc-result-val" id="loan-amt">$320,000</span></div>
+            <div class="bcr-score-row">
+              <div><div class="bcr-score-label">BCR™ Score</div><div class="bcr-score-sub">Reserve / Loan Exposure</div></div>
+              <div style="text-align:right"><div class="bcr-score-val" id="bcr-score">12.5%</div></div>
+            </div>
+            <div style="margin-top:.75rem;font-size:.75rem;color:rgba(255,255,255,.4)">BCR™ &gt; 10% = strong first-loss coverage. BCR™ &gt; 15% = PMI replacement threshold.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COALITION SECTION — moved from Supporters tab -->
+      <div class="separator"></div>
+      <div class="section-tag">Coalition Building</div>
+      <h3 style="font-family:var(--font-serif);font-size:1.6rem;color:var(--navy);margin-bottom:.5rem">Support the Pilot</h3>
+      <p style="font-size:.95rem;color:var(--muted);margin-bottom:1.75rem">Add your name to the growing coalition backing the Akkume Bitcoin reserve layer pilot. Every supporter strengthens the case for FHFA action.</p>
+
+      <div class="supporters-counter">
+        <div class="counter-card"><span class="counter-num" id="count-total">47</span><div class="counter-label">Total Supporters</div></div>
+        <div class="counter-card"><span class="counter-num" id="count-public">31</span><div class="counter-label">Public Backers</div></div>
+        <div class="counter-card"><span class="counter-num">FHFA + GSE + MISMO</span><div class="counter-label">Strategic Focus</div></div>
+      </div>
+
+      <div class="supporters-grid" id="supporters-list">
+        <div class="supporter-card"><div class="supporter-name">James Whitmore</div><div class="supporter-role">Lender · Community Bank</div><div class="supporter-msg">"A first-loss buffer that doesn't change underwriting is exactly what the market needs."</div><span class="supporter-badge badge-public">Public</span></div>
+        <div class="supporter-card"><div class="supporter-name">Anonymous</div><div class="supporter-role">Investor · Asset Manager</div><div class="supporter-msg">Backs the pilot on policy merits.</div><span class="supporter-badge badge-private">Private</span></div>
+        <div class="supporter-card"><div class="supporter-name">Elena Vasquez</div><div class="supporter-role">Policy Advocate · Housing Finance</div><div class="supporter-msg">"This could be the modernization moment housing finance needs."</div><span class="supporter-badge badge-public">Public</span></div>
+        <div class="supporter-card"><div class="supporter-name">Anonymous</div><div class="supporter-role">Servicer</div><div class="supporter-msg">Supports expanded pilot research.</div><span class="supporter-badge badge-private">Private</span></div>
+      </div>
+
+      <!-- SIGN FORM — with visibility dropdown added -->
+      <div class="coalition-wrap" id="coalition-form">
+        <h3>Sign &amp; Support the Pilot</h3>
+        <p>Add your signature in support of the FHFA pilot and proposed rule changes. Takes 60 seconds.</p>
+        <div class="step-indicator">
+          <div class="step-dot active" id="sdot-1">1</div>
+          <div class="step-line"></div>
+          <div class="step-dot inactive" id="sdot-2">2</div>
+          <div class="step-line"></div>
+          <div class="step-dot inactive" id="sdot-3">3</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-form active" id="step-1">
+          <div class="form-row-2">
+            <div class="dark-form-field"><label>Full Name *</label><input type="text" id="s-name" placeholder="Your full name"></div>
+            <div class="dark-form-field"><label>Email *</label><input type="email" id="s-email" placeholder="your@email.com"></div>
+          </div>
+          <div class="form-row-2">
+            <div class="dark-form-field"><label>Your Role *</label>
+              <select id="s-role">
+                <option value="">Select…</option>
+                <option>Borrower</option><option>Lender</option><option>Investor</option>
+                <option>Servicer</option><option>Regulator</option><option>Strategic Partner</option>
+                <option>Trade Association</option><option>Researcher / Academic</option><option>Other</option>
+              </select>
+            </div>
+            <div class="dark-form-field"><label>Company / Org.</label><input type="text" id="s-company" placeholder="Optional"></div>
+          </div>
+          <div class="dark-form-field"><label>Visibility *</label>
+            <select id="s-visibility" onchange="toggleLogoUpload(this.value)">
+              <option value="">Select your preference…</option>
+              <option value="public">List publicly — name + role visible on this page</option>
+              <option value="private">Keep private — count me anonymously</option>
+            </select>
+          </div>
+          <div id="logo-upload-section" style="display:none">
+            <div class="dark-form-field"><label>Upload Company Logo (optional)</label>
+              <div class="upload-area" onclick="document.getElementById('logo-file').click()">
+                <span style="font-size:1.3rem">🏢</span>
+                <p>Click to upload — PNG or SVG preferred</p>
+                <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="previewLogo(this)">
+                <img id="upload-preview" alt="Logo preview">
+              </div>
+            </div>
+          </div>
+          <div class="error-msg" id="s-error-1">Please fill in your name, email, role, and visibility preference.</div>
+          <div style="margin-top:.9rem"><button class="btn-primary" onclick="supportStep1()">Continue →</button></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-form" id="step-2">
+          <div class="dark-form-field"><label>How would you like to help? *</label>
+            <select id="s-help">
+              <option value="">Select…</option>
+              <option>Actively join the push</option><option>Pledge resources</option>
+              <option>Request a briefing</option><option>Media / policy support</option>
+              <option>Sign in principle only</option>
+            </select>
+          </div>
+          <div class="dark-form-field"><label>Message or Comment (optional)</label>
+            <textarea id="s-message" placeholder="Share why you support this pilot…" style="min-height:75px"></textarea>
+          </div>
+          <div class="error-msg" id="s-error-2">Please select how you'd like to help.</div>
+          <div style="display:flex;gap:.7rem;margin-top:.9rem;flex-wrap:wrap">
+            <button class="btn-outline" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2)" onclick="supportBack(2)">← Back</button>
+            <button class="btn-primary" onclick="supportStep2()">Continue →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-form" id="step-3">
+          <div class="form-check"><input type="checkbox" id="s-agree-sign"><label for="s-agree-sign">I want to sign the proposal in support of the Akkume pilot and proposed FHFA rule changes. I understand this is a statement of support, not a legal commitment.</label></div>
+          <div class="form-check"><input type="checkbox" id="s-agree-updates"><label for="s-agree-updates">Keep me updated on pilot progress and FHFA developments (unsubscribe anytime).</label></div>
+          <div class="error-msg" id="s-error-3">Please check the support agreement box to continue.</div>
+          <div style="display:flex;gap:.7rem;margin-top:.9rem;flex-wrap:wrap">
+            <button class="btn-outline" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2)" onclick="supportBack(3)">← Back</button>
+            <button class="btn-primary" onclick="submitSupport()">Submit Support ✓</button>
+          </div>
+        </div>
+
+        <div id="share-box">
+          <h4>You're in. Thank you. 🎉</h4>
+          <p>Share this link to bring more voices to the coalition.</p>
+          <div class="share-link-row">
+            <input class="share-link-input" type="text" id="share-link-val" value="https://akkume.com/support?ref=coalition" readonly>
+            <button class="btn-copy" onclick="copyShareLink()">Copy Link</button>
+          </div>
+          <p id="copy-confirm" style="font-size:.78rem;color:var(--gold2);margin-top:.45rem;display:none">✓ Copied to clipboard!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════ DASHBOARD ═══════════════════════ -->
+<div id="tab-dashboard" class="tab-section">
+  <section class="section">
+    <div class="section-inner">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.9rem;margin-bottom:1.4rem">
+        <div>
+          <div class="section-tag">Live Data · FRED/MBA/BLS — Updated Feb 24, 2026</div>
+          <h2 class="section-title" style="margin-bottom:0">Housing System Stress Dashboard</h2>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);background:var(--white);border:1px solid var(--border);border-radius:8px;padding:.45rem .85rem">Last updated: <strong id="dash-time">—</strong></div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dash-label">U.S. Delinquency Rate</div><div class="dash-val">4.26%</div><div class="dash-change dash-up">↑ Q4 2025 · 4-yr high</div><span class="dash-tag tag-danger">Alert</span></div>
+        <div class="dash-card"><div class="dash-label">FHA Delinquency</div><div class="dash-val" style="color:var(--red-alert)">11.52%</div><div class="dash-change dash-up">↑ Major stress signal</div><span class="dash-tag tag-danger">Alert</span></div>
+        <div class="dash-card"><div class="dash-label">Serious Delinquency</div><div class="dash-val">1.85%</div><div class="dash-change dash-up">↑ 36% YoY</div><span class="dash-tag tag-warn">Rising</span></div>
+        <div class="dash-card"><div class="dash-label">In Foreclosure</div><div class="dash-val">0.53%</div><div class="dash-change" style="color:var(--muted)">Pipeline risk building</div><span class="dash-tag tag-warn">Elevated</span></div>
+        <div class="dash-card"><div class="dash-label">White-Collar Layoffs YTD</div><div class="dash-val">198K</div><div class="dash-change dash-up">Tech, finance, consulting</div><span class="dash-tag tag-warn">Income Shock</span></div>
+        <div class="dash-card"><div class="dash-label">VA Delinquency</div><div class="dash-val">4.60%</div><div class="dash-change" style="color:var(--muted)">Above conventional</div><span class="dash-tag tag-warn">Elevated</span></div>
+      </div>
+      <div class="fred-note" style="margin-bottom:1.5rem">Sources: FRED (Federal Reserve Economic Data), MBA National Delinquency Survey Q4 2025, BLS JOLTS Jan 2026, CoreLogic. Data current as of Feb 24, 2026.</div>
+
+      <div class="chart-row">
+        <div class="chart-wrap">
+          <div class="chart-title">Delinquency by Loan Type — Q4 2025 (FRED/MBA)</div>
+          <div class="chart-sub">Dispersion is the signal — FHA stress is not systemic, yet.</div>
+          <div style="position:relative;height:250px"><canvas id="delinqChart" role="img" aria-label="Bar chart: FHA 11.52%, VA 4.60%, Conventional 2.89%">FHA 11.52%, VA 4.60%, Conventional 2.89%</canvas></div>
+          <div style="display:flex;gap:1.1rem;margin-top:.9rem;font-size:.75rem;color:var(--muted)">
+            <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#C0392B;display:inline-block"></span>FHA 11.52%</span>
+            <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#E8891A;display:inline-block"></span>VA 4.60%</span>
+            <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:#4A8FC1;display:inline-block"></span>Conventional 2.89%</span>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Early-Stage Stress Roll-Up</div>
+          <div class="chart-sub">60-day and 90-day buckets are rising (FRED, Feb 2026).</div>
+          <div style="position:relative;height:250px"><canvas id="stressChart" role="img" aria-label="Bar chart: 30-day 2.07%, 60-day 0.92%, 90-day 1.27%">30-day 2.07%, 60-day 0.92%, 90-day 1.27%</canvas></div>
+          <div style="display:flex;gap:.9rem;margin-top:.9rem;font-size:.75rem;color:var(--muted);flex-wrap:wrap">
+            <span>30-Day: Slightly Down</span>
+            <span style="color:var(--red-alert)">60-Day: Rising ↑</span>
+            <span style="color:var(--red-alert)">90-Day: Rising ↑</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-wrap" style="margin-bottom:1.75rem">
+        <div class="chart-title">Loss Absorption: Before and After BTC Reserve Layer</div>
+        <div class="chart-sub">Bitcoin reserve absorbs first, shifting risk away from GSEs and taxpayers.</div>
+        <div class="loss-chart">
+          <div class="loss-row"><span class="loss-label">Current System</span><div class="loss-bar-track"><div class="loss-seg gse" style="width:45%">GSE 45%</div><div class="loss-seg taxpayer" style="width:55%">Taxpayer 55%</div></div></div>
+          <div class="loss-row" style="margin-top:.4rem"><span class="loss-label">With BTC Reserve</span><div class="loss-bar-track"><div class="loss-seg btc" style="width:30%">BTC 30%</div><div class="loss-seg gse" style="width:25%">GSE 25%</div><div class="loss-seg taxpayer" style="width:10%">Tax 10%</div><div class="loss-seg" style="width:35%;background:var(--green-safe)">Avoided 35%</div></div></div>
+        </div>
+        <div class="loss-legend">
+          <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--gold)"></span>BTC Reserve (first-loss)</span>
+          <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--navy)"></span>GSE exposure</span>
+          <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--red-alert)"></span>Taxpayer exposure</span>
+          <span class="loss-leg-item"><span class="loss-leg-dot" style="background:var(--green-safe)"></span>Losses avoided</span>
+        </div>
+      </div>
+
+      <div class="api-banner">
+        <div class="api-text">
+          <h4>Live Data Feeds &amp; API Access</h4>
+          <p>Connected to FRED, MBA, CoreLogic, BLS, and Bitcoin price feeds. Updated automatically.</p>
+          <div class="api-feeds">
+            <span class="feed-tag">FRED Delinquency</span><span class="feed-tag">MBA NDS</span><span class="feed-tag">CoreLogic Risk</span>
+            <span class="feed-tag">BLS Employment</span><span class="feed-tag">Bitcoin Price</span>
+          </div>
+        </div>
+        <button class="btn-api" onclick="alert('API access available at akkume.com/api — contact briefing@akkume.com for credentials.')">Request API Access</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════ QUESTIONNAIRE ═══════════════════════ -->
+<div id="tab-questionnaire" class="tab-section">
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-tag">Industry Research</div>
+      <h2 class="section-title">Stakeholder Survey</h2>
+      <div class="q-intro">
+        <h3>Shape the Pilot Design</h3>
+        <p>Your input directly informs the Akkume pilot proposal and FHFA briefing materials. All responses are confidential unless you opt in to attribution.</p>
+        <div class="q-level-tabs">
+          <button class="q-tab active" onclick="setQLevel(1,this)">Level 1 — Standard (5 min)</button>
+          <button class="q-tab" onclick="setQLevel(2,this)">Level 2 — Technical Deep Dive <span class="level-2-badge">Advanced</span></button>
+        </div>
+      </div>
+      <div class="q-progress"><div class="q-progress-fill" id="q-progress-fill" style="width:20%"></div></div>
+
+      <div id="q-level-1">
+        <div id="qpage-1" class="q-page" style="display:block">
+          <div class="q-section-wrap">
+            <h4>About You</h4>
+            <div class="q-question"><label>Your Role in the Mortgage Industry</label>
+              <select id="q-role"><option value="">Select your primary role…</option><option>Lender / Originator</option><option>Servicer</option><option>GSE / Secondary Market</option><option>Investor / Asset Manager</option><option>Regulator / Policy Staff</option><option>Mortgage Insurance</option><option>Technology / Fintech</option><option>Trade Association</option><option>Borrower / Consumer Advocate</option><option>Other</option></select>
+            </div>
+            <div class="q-question"><label>Organization (optional)</label><input type="text" id="q-org" placeholder="Your company or institution"></div>
+            <div class="q-question"><label>Years of experience in mortgage/housing finance</label>
+              <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-exp" value="1"> Less than 5 years</label><label class="radio-opt"><input type="radio" name="q-exp" value="2"> 5–15 years</label><label class="radio-opt"><input type="radio" name="q-exp" value="3"> 15+ years</label></div>
+            </div>
+          </div>
+          <div class="q-nav"><span class="q-page-info">Page 1 of 3</span><button class="btn-primary" onclick="qNext(1)">Next →</button></div>
+        </div>
+
+        <div id="qpage-2" class="q-page" style="display:none">
+          <div class="q-section-wrap">
+            <h4>Current Market Assessment</h4>
+            <div class="q-question"><label>How concerned are you about current mortgage credit stress levels?</label><p>1 = Not concerned · 5 = Extremely concerned</p>
+              <div class="scale-row"><span style="font-size:.78rem;color:var(--muted)">1</span><input type="range" min="1" max="5" value="3" id="q-concern" oninput="document.getElementById('q-concern-val').textContent=this.value"><span style="font-size:.78rem;color:var(--muted)">5</span><span id="q-concern-val" style="font-weight:700;color:var(--navy);width:18px">3</span></div>
+            </div>
+            <div class="q-question"><label>Which borrower segments do you see as most at-risk today?</label>
+              <div class="check-group"><label class="radio-opt"><input type="checkbox" name="q-segment" value="fha"> FHA / low-down-payment</label><label class="radio-opt"><input type="checkbox" name="q-segment" value="va"> VA loans</label><label class="radio-opt"><input type="checkbox" name="q-segment" value="low-balance"> Low-balance (&lt;$150K)</label><label class="radio-opt"><input type="checkbox" name="q-segment" value="manufactured"> Manufactured housing</label><label class="radio-opt"><input type="checkbox" name="q-segment" value="jumbo"> Jumbo / non-QM</label></div>
+            </div>
+            <div class="q-question"><label>What is your biggest concern with current credit enhancement tools (MI, CRT)?</label><textarea id="q-ce-concern" placeholder="Share your perspective…"></textarea></div>
+          </div>
+          <div class="q-nav"><button class="btn-outline" style="color:var(--navy);border-color:var(--border)" onclick="qPrev(2)">← Back</button><span class="q-page-info">Page 2 of 3</span><button class="btn-primary" onclick="qNext(2)">Next →</button></div>
+        </div>
+
+        <div id="qpage-3" class="q-page" style="display:none">
+          <div class="q-section-wrap">
+            <h4>Bitcoin Reserve Concept</h4>
+            <div class="q-question"><label>How familiar are you with Bitcoin as a reserve/credit enhancement asset?</label>
+              <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-familiarity" value="1"> Not familiar at all</label><label class="radio-opt"><input type="radio" name="q-familiarity" value="2"> Aware but not studied</label><label class="radio-opt"><input type="radio" name="q-familiarity" value="3"> Moderately familiar</label><label class="radio-opt"><input type="radio" name="q-familiarity" value="4"> Very familiar / actively following</label></div>
+            </div>
+            <div class="q-question"><label>What is your initial reaction to a borrower-funded Bitcoin reserve as a first-loss layer?</label>
+              <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-reaction" value="1"> Strongly opposed</label><label class="radio-opt"><input type="radio" name="q-reaction" value="2"> Skeptical but open to data</label><label class="radio-opt"><input type="radio" name="q-reaction" value="3"> Neutral</label><label class="radio-opt"><input type="radio" name="q-reaction" value="4"> Cautiously supportive</label><label class="radio-opt"><input type="radio" name="q-reaction" value="5"> Strongly supportive</label></div>
+            </div>
+            <div class="q-question"><label>What would need to be true for you to actively support this pilot?</label><textarea id="q-conditions" placeholder="Regulatory clarity, custodial standards, volatility guardrails, data proof…"></textarea></div>
+            <div class="q-question"><label>Would you like a direct briefing from the Akkume team?</label>
+              <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-briefing" value="yes"> Yes — please reach out</label><label class="radio-opt"><input type="radio" name="q-briefing" value="no"> No thank you</label></div>
+            </div>
+            <div class="dark-form-field" style="margin-top:.7rem;--form-bg:var(--cream);--form-border:var(--border);--form-color:var(--text)">
+              <label style="color:var(--text)">Email (to receive results / briefing)</label>
+              <input type="email" id="q-email" placeholder="your@email.com" style="background:var(--cream);border:1px solid var(--border);color:var(--text)">
+            </div>
+          </div>
+          <div class="q-nav"><button class="btn-outline" style="color:var(--navy);border-color:var(--border)" onclick="qPrev(3)">← Back</button><span class="q-page-info">Page 3 of 3</span><button class="btn-primary" onclick="submitQuestionnaire()">Submit Survey →</button></div>
+        </div>
+      </div>
+
+      <div id="q-level-2" style="display:none">
+        <div class="q-section-wrap">
+          <h4>Technical &amp; Structural Analysis <span class="level-2-badge">Level 2</span></h4>
+          <div class="q-question"><label>How would you classify a borrower-funded BTC reserve under your current capital framework?</label>
+            <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-capital" value="1"> Credit enhancement (like MI)</label><label class="radio-opt"><input type="radio" name="q-capital" value="2"> Collateral pledge</label><label class="radio-opt"><input type="radio" name="q-capital" value="3"> Off-balance-sheet reserve</label><label class="radio-opt"><input type="radio" name="q-capital" value="4"> Novel — requires new classification</label><label class="radio-opt"><input type="radio" name="q-capital" value="5"> Uncertain / unclear</label></div>
+          </div>
+          <div class="q-question"><label>What custodial structure would you require for the BTC reserve to be credit-worthy?</label><textarea id="q-custodial" placeholder="Qualified custodian, bankruptcy remote, segregated account, regulated entity…" style="min-height:90px"></textarea></div>
+          <div class="q-question"><label>What volatility threshold would cause you to reject a BTC reserve as inadequate first-loss protection?</label>
+            <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-volatility" value="1"> Any volatility &gt;20% annualized</label><label class="radio-opt"><input type="radio" name="q-volatility" value="2"> 30-day drawdown &gt;15%</label><label class="radio-opt"><input type="radio" name="q-volatility" value="3"> Would require dynamic sizing (e.g., target volatility)</label><label class="radio-opt"><input type="radio" name="q-volatility" value="4"> Volatility less important than long-run appreciation</label><label class="radio-opt"><input type="radio" name="q-volatility" value="5"> Other / not applicable</label></div>
+          </div>
+          <div class="q-question"><label>Which MISMO data elements would need to change to support a BTC reserve on loan tapes?</label><textarea id="q-mismo" placeholder="Reserve asset type, custodian ID, mark-to-market value, liquidation trigger…" style="min-height:90px"></textarea></div>
+          <div class="q-question"><label>Estimated GSE capital relief from a qualified BTC first-loss layer (ERCF impact)</label>
+            <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-ercf" value="1"> Less than 10%</label><label class="radio-opt"><input type="radio" name="q-ercf" value="2"> 10–20%</label><label class="radio-opt"><input type="radio" name="q-ercf" value="3"> 20–35%</label><label class="radio-opt"><input type="radio" name="q-ercf" value="4"> Over 35%</label><label class="radio-opt"><input type="radio" name="q-ercf" value="5"> Unable to estimate</label></div>
+          </div>
+          <div class="q-question"><label>Would your institution consider participating in the $150M pilot?</label>
+            <div class="radio-group"><label class="radio-opt"><input type="radio" name="q-participate" value="yes"> Yes — we'd actively explore</label><label class="radio-opt"><input type="radio" name="q-participate" value="maybe"> Possibly — need more data</label><label class="radio-opt"><input type="radio" name="q-participate" value="no"> Not at this stage</label></div>
+          </div>
+          <div style="margin-top:.75rem"><label style="font-size:.78rem;font-weight:600;color:var(--text);display:block;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">Contact for Follow-up</label><input type="email" id="q2-email" placeholder="your@institution.com" style="width:100%;background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:.62rem .88rem;font-family:var(--font-sans);font-size:.86rem;color:var(--text)"></div>
+          <div style="margin-top:1.35rem"><button class="btn-primary" onclick="submitQuestionnaire()">Submit Technical Survey →</button></div>
+        </div>
+      </div>
+      <div class="success-msg" id="q-success" style="font-size:.93rem;padding:1.1rem 1.35rem;margin-top:.9rem">✓ Thank you. Your responses have been submitted. We'll be in touch if you requested a briefing.</div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════ DATA ROOM ═══════════════════════ -->
+<div id="tab-dataroom" class="tab-section">
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-tag">Research &amp; Analytics</div>
+      <h2 class="section-title">Data Room</h2>
+      <p class="section-sub">Curated data analytics, policy documents, and research supporting the Akkume Bitcoin reserve layer framework. Access tiers vary by content sensitivity.</p>
+
+      <div class="data-room-grid">
+        <div class="data-room-card">
+          <span class="data-room-icon">📊</span>
+          <div class="data-room-title">MBA Delinquency Survey Archive</div>
+          <div class="data-room-desc">Full quarterly dataset of mortgage delinquency rates by loan type, delinquency bucket, and state. Q1 2020 – Q4 2025. FRED-verified figures.</div>
+          <span class="data-room-tag tag-free">Free Access</span>
+        </div>
+        <div class="data-room-card">
+          <span class="data-room-icon">🧮</span>
+          <div class="data-room-title">DACI Metric Methodology</div>
+          <div class="data-room-desc">Technical paper describing the 7 DACI metrics, BCR™ calculation methodology, volatility buffer sizing, and Custody Score rubric.</div>
+          <span class="data-room-tag tag-member">Member Access</span>
+        </div>
+        <div class="data-room-card">
+          <span class="data-room-icon">📈</span>
+          <div class="data-room-title">Housing Stress Analytics Reports</div>
+          <div class="data-room-desc">Monthly Akkume research reports cross-referencing FRED delinquency data, BLS income shock indicators, and CoreLogic risk scores.</div>
+          <span class="data-room-tag tag-member">Member Access</span>
+        </div>
+        <div class="data-room-card">
+          <span class="data-room-icon">🏦</span>
+          <div class="data-room-title">GSE Pilot Modeling Data</div>
+          <div class="data-room-desc">Loan-level simulation data for the $150M Phase 1 pilot, including control cohort design, LTV distributions, and stress scenario projections.</div>
+          <span class="data-room-tag tag-restricted">Restricted</span>
+        </div>
+        <div class="data-room-card">
+          <span class="data-room-icon">📋</span>
+          <div class="data-room-title">MISMO Standards Mapping</div>
+          <div class="data-room-desc">Proposed data element extensions for BTC reserve classification within existing MISMO loan tape reporting frameworks.</div>
+          <span class="data-room-tag tag-member">Member Access</span>
+        </div>
+        <div class="data-room-card">
+          <span class="data-room-icon">🔬</span>
+          <div class="data-room-title">CRT Spread Impact Model</div>
+          <div class="data-room-desc">Expected tightening across senior, mezzanine, and junior CRT tranches with BTC buffer effect analysis and attachment frequency modeling.</div>
+          <span class="data-room-tag tag-restricted">Restricted</span>
+        </div>
+      </div>
+
+      <div class="access-banner">
+        <h4>Access the Full Data Room</h4>
+        <p>Member and restricted documents are available to verified industry participants, institutional contacts, and pilot partners.</p>
+        <div class="access-tiers">
+          <div class="access-tier"><div class="access-tier-name">Open</div><div class="access-tier-price">Free</div><div class="access-tier-desc">FRED data, public methodology, briefings</div></div>
+          <div class="access-tier" style="border-color:rgba(232,137,26,.3)"><div class="access-tier-name">Member</div><div class="access-tier-price" style="font-size:1.2rem">Contact Us</div><div class="access-tier-desc">Analytics reports, MISMO mapping, DACI details</div></div>
+          <div class="access-tier" style="border-color:rgba(192,57,43,.3)"><div class="access-tier-name">Restricted</div><div class="access-tier-price" style="font-size:1.2rem">Vetted Partners</div><div class="access-tier-desc">Pilot model data, CRT analysis, loan tapes</div></div>
+        </div>
+        <button class="btn-primary" onclick="alert('Contact briefing@akkume.com to request data room access.')">Request Access</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════ INNOVATIONS ═══════════════════════ -->
+<div id="tab-innovations" class="tab-section">
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-tag">Industry Transformation</div>
+      <h2 class="section-title">Innovations</h2>
+      <p class="section-sub">How Akkume's Bitcoin reserve framework reengineers mortgage economics, credit scoring, ABS/MBS ratings, and CRT spread dynamics.</p>
+
+      <div class="innov-section">
+        <h3>i. Lender Economics</h3>
+        <p>Optional lenders receive a <strong>coupon concession</strong> (lower rate paid) and structured <strong>BTC upside participation</strong> in the Q-BR (Qualified Bitcoin Reserve) in exchange for accepting higher nominal LTV. This creates a new lender incentive structure that aligns long-term Bitcoin appreciation with credit risk management.</p>
+        <ul>
+          <li>Lender accepts higher nominal LTV → receives coupon concession (spread reduction)</li>
+          <li>Lender participates in structured BTC upside if reserve value exceeds trigger threshold</li>
+          <li>Net effect: lower borrower rate, better lender economics over cycle, reduced loss frequency</li>
+          <li>Model: lender coupon concession of 25–50 bps offset by estimated 8–12% annualized BTC reserve appreciation</li>
+        </ul>
+      </div>
+
+      <div class="innov-section">
+        <h3>ii. BCR™ Replaces PMI Logic</h3>
+        <p>The Bitcoin Coverage Ratio (BCR™) is designed to functionally replace Private Mortgage Insurance (PMI) as the primary risk mitigation mechanism at high LTVs. Unlike PMI, BCR™ benefits the borrower directly through retained asset appreciation.</p>
+        <ul>
+          <li>PMI: pure cost to borrower, zero upside, paid to third-party insurer</li>
+          <li>BCR™: borrower retains the Bitcoin reserve; appreciation benefits the household</li>
+          <li>At BCR™ &gt; 15%, PMI requirement can be waived under proposed pilot guidelines</li>
+          <li>Lender protection maintained: BTC reserve callable as first-loss in default event</li>
+          <li>Borrower protection: non-collateral — cannot be seized in refinance or sale</li>
+        </ul>
+      </div>
+
+      <div class="innov-section">
+        <h3>iii. ABCS — Alternative Bitcoin Credit Score</h3>
+        <p>The ABCS is Akkume's proposed credit scoring layer that augments FICO by incorporating Bitcoin reserve accumulation behavior as a creditworthiness signal. A borrower who maintains and grows a BTC reserve demonstrates financial discipline and long-term savings capacity.</p>
+        <div class="fico-compare">
+          <div class="fico-card traditional">
+            <div class="fico-card-label">Traditional</div>
+            <div class="fico-card-title">FICO Score</div>
+            <ul class="fico-card-items">
+              <li>Payment history (35%)</li>
+              <li>Credit utilization (30%)</li>
+              <li>Length of history (15%)</li>
+              <li>New credit (10%)</li>
+              <li>Credit mix (10%)</li>
+              <li>No asset accumulation signal</li>
+            </ul>
+          </div>
+          <div class="fico-card abcs">
+            <div class="fico-card-label" style="color:var(--gold)">Akkume Innovation</div>
+            <div class="fico-card-title">ABCS Augmentation</div>
+            <ul class="fico-card-items">
+              <li>FICO base (weighted)</li>
+              <li>BTC reserve consistency score</li>
+              <li>BCR™ trajectory (growing / stable)</li>
+              <li>Custody compliance rating</li>
+              <li>Income-to-reserve ratio</li>
+              <li>Default Probability Delta from DACI</li>
+            </ul>
+          </div>
+        </div>
+        <p style="font-size:.85rem;color:var(--muted)"><strong>Example Impact:</strong> A borrower with FICO 680 and a BCR™ of 18% sustained over 24 months could qualify for ABS/MBS pool inclusion at AAA-equivalent tranche, improving pool composition and rating agency assessment. The ABCS signal reduces expected default probability by an estimated 15–30% in stress scenarios.</p>
+      </div>
+
+      <div class="innov-section">
+        <h3>iv. Loan Tape Model</h3>
+        <p>Akkume's Bitcoin reserve framework requires new data elements on standard loan tapes to enable secondary market pricing, GSE pool analysis, and rating agency assessment.</p>
+        <table class="crt-table">
+          <thead><tr><th>Field</th><th>Description</th><th>Source</th></tr></thead>
+          <tbody>
+            <tr><td>BTC_RESERVE_USD</td><td>Mark-to-market USD value of BTC reserve at origination</td><td>Custodian</td></tr>
+            <tr><td>BCR_SCORE</td><td>Bitcoin Coverage Ratio at origination</td><td>Akkume DACI</td></tr>
+            <tr><td>CUSTODIAN_ID</td><td>Qualified custodian identifier (regulated)</td><td>Custodian</td></tr>
+            <tr><td>BTC_AMOUNT</td><td>Bitcoin quantity in reserve (fractional)</td><td>Custodian</td></tr>
+            <tr><td>LIQ_TRIGGER_PCT</td><td>LTV threshold triggering reserve liquidation</td><td>Mortgage Covenant</td></tr>
+            <tr><td>RESERVE_STATUS</td><td>Active / Partially Liquidated / Fully Liquidated</td><td>Servicer</td></tr>
+            <tr><td>ABCS_SCORE</td><td>Alternative Bitcoin Credit Score at origination</td><td>Akkume DACI</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="innov-section">
+        <h3>v. Implementation &amp; Institution Guide</h3>
+        <p>A structured path for lenders, servicers, and GSE partners to implement the Q-BR (Qualified Bitcoin Reserve) framework within existing origination and servicing infrastructure.</p>
+        <ul>
+          <li><strong>Phase 1 — Origination:</strong> Integrate BTC reserve allocation at closing. Custodian designated at origination. Reserve funded via wire alongside down payment.</li>
+          <li><strong>Phase 2 — Servicing:</strong> Monthly mark-to-market reporting. Automated BCR™ monitoring. Trigger alerts sent to servicer and borrower.</li>
+          <li><strong>Phase 3 — Secondary Market:</strong> Loan tape BTC fields populated. GSE eligibility checklist. Rating agency disclosure packet.</li>
+          <li><strong>Compliance:</strong> State-by-state regulatory analysis available in Data Room. Federal framework under FHFA conservatorship authority for Phase 1.</li>
+          <li><strong>Technology:</strong> API-first integration with leading LOS platforms (ICE Mortgage, Black Knight). MISMO-compatible data schema.</li>
+        </ul>
+      </div>
+
+      <div class="innov-section">
+        <h3>vi. Expected Impact on CRT Spreads</h3>
+        <p>The Bitcoin reserve layer fundamentally changes credit risk transfer economics by reducing the frequency of attachment, severity when attached, and loss timing — all of which compress spreads across the capital structure.</p>
+        <div style="background:var(--navy);border-radius:var(--radius-lg);padding:1.75rem;margin:1rem 0">
+          <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:1rem">Bitcoin Buffer Effect on CRT Tranches</div>
+          <div style="display:flex;flex-direction:column;gap:.65rem">
+            <div style="display:flex;align-items:center;gap:.9rem;flex-wrap:wrap">
+              <span style="font-size:.82rem;color:rgba(255,255,255,.55);width:170px;flex-shrink:0">Senior Tranches (M1/M2)</span>
+              <span style="background:rgba(30,107,60,.2);border:1px solid rgba(30,107,60,.35);color:#5DD68B;font-size:.8rem;font-weight:700;padding:.22rem .65rem;border-radius:4px">Tighten ~20–50 bps</span>
+              <span style="font-size:.78rem;color:rgba(255,255,255,.4)">Reduced attachment frequency</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.9rem;flex-wrap:wrap">
+              <span style="font-size:.82rem;color:rgba(255,255,255,.55);width:170px;flex-shrink:0">Mezzanine (M2/B)</span>
+              <span style="background:rgba(30,107,60,.2);border:1px solid rgba(30,107,60,.35);color:#5DD68B;font-size:.8rem;font-weight:700;padding:.22rem .65rem;border-radius:4px">Tighten ~50–150 bps</span>
+              <span style="font-size:.78rem;color:rgba(255,255,255,.4)">Lower severity when attached</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.9rem;flex-wrap:wrap">
+              <span style="font-size:.82rem;color:rgba(255,255,255,.55);width:170px;flex-shrink:0">Junior / First-Loss CRT</span>
+              <span style="background:rgba(232,137,26,.15);border:1px solid rgba(232,137,26,.3);color:var(--gold2);font-size:.8rem;font-weight:700;padding:.22rem .65rem;border-radius:4px">Compress 150–300+ bps</span>
+              <span style="font-size:.78rem;color:rgba(255,255,255,.4)">BTC absorbs before CRT gets hit</span>
+            </div>
+          </div>
+          <div style="margin-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);padding-top:1.1rem">
+            <div style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.55);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.06em">Bitcoin Buffer Effect — Mechanism</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem">
+              <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.85rem">
+                <div style="font-size:.78rem;font-weight:700;color:var(--gold);margin-bottom:.35rem">Absorbs Losses Before CRT Gets Hit</div>
+                <ul style="list-style:none;display:flex;flex-direction:column;gap:.3rem">
+                  <li style="font-size:.78rem;color:rgba(255,255,255,.55);padding-left:.8rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">·</span>Reduces frequency of attachment</li>
+                  <li style="font-size:.78rem;color:rgba(255,255,255,.55);padding-left:.8rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">·</span>Reduces severity when attached</li>
+                  <li style="font-size:.78rem;color:rgba(255,255,255,.55);padding-left:.8rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">·</span>Earlier cures — faster loss timing</li>
+                </ul>
+              </div>
+              <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.85rem">
+                <div style="font-size:.78rem;font-weight:700;color:var(--gold);margin-bottom:.35rem">ABS/MBS Rating Impact</div>
+                <ul style="list-style:none;display:flex;flex-direction:column;gap:.3rem">
+                  <li style="font-size:.78rem;color:rgba(255,255,255,.55);padding-left:.8rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">·</span>Pool-level BCR™ improves WAL</li>
+                  <li style="font-size:.78rem;color:rgba(255,255,255,.55);padding-left:.8rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">·</span>ABCS augments rating agency model</li>
+                  <li style="font-size:.78rem;color:rgba(255,255,255,.55);padding-left:.8rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">·</span>Expected 1–2 notch improvement in pool rating</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="navigate('dataroom')" style="margin-top:.75rem">View CRT Spread Model in Data Room →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer style="background:var(--navy);color:rgba(255,255,255,.4);text-align:center;padding:1.75rem 1.5rem;font-size:.77rem">
+  <div style="margin-bottom:.4rem"><span style="color:var(--white);font-family:var(--font-serif);font-size:.97rem">Akkume</span> · Reserve Layer · Housing Finance · Pilot Proposal · DigiDow™ · BCR™</div>
+  <div>© 2026 Akkume · akkume.com · briefing@akkume.com</div>
+  <div style="margin-top:.4rem;font-size:.71rem;color:rgba(255,255,255,.22)">This site presents a policy proposal. Data sourced from FRED, MBA, BLS, CoreLogic as of Feb 24, 2026. Not investment advice. Not a securities offering.</div>
+</footer>
+
+<script>
+/* ── NAVIGATION ── */
+const TABS=['home','briefing','proposal','dashboard','questionnaire','dataroom','innovations'];
+function navigate(tab){
+  TABS.forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el) el.classList.remove('active');
+    const nav=document.getElementById('nav-'+t);
+    if(nav) nav.classList.remove('active-tab');
+  });
+  const el=document.getElementById('tab-'+tab);
+  if(el) el.classList.add('active');
+  const nav=document.getElementById('nav-'+tab);
+  if(nav) nav.classList.add('active-tab');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(tab==='dashboard') setTimeout(initCharts,100);
+}
+function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open')}
+
+/* ── DASHBOARD TIME ── */
+function updateTime(){const el=document.getElementById('dash-time');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+updateTime();setInterval(updateTime,60000);
+
+/* ── CHARTS ── */
+let chartsInit=false;
+function initCharts(){
+  if(chartsInit)return;chartsInit=true;
+  new Chart(document.getElementById('delinqChart'),{
+    type:'bar',
+    data:{labels:['FHA','VA','Conventional'],datasets:[{label:'Delinquency Rate',data:[11.52,4.60,2.89],backgroundColor:['#C0392B','#E8891A','#4A8FC1'],borderRadius:6,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}},scales:{y:{beginAtZero:true,max:14,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:12,weight:'500'}},grid:{display:false}}}}
+  });
+  new Chart(document.getElementById('stressChart'),{
+    type:'bar',
+    data:{labels:['30-Day','60-Day','90-Day'],datasets:[{label:'Early Stress',data:[2.07,0.92,1.27],backgroundColor:['#4A8FC1','#C0392B','#C0392B'],borderRadius:6,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'%'}}},scales:{y:{beginAtZero:true,max:3.5,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:12,weight:'500'}},grid:{display:false}}}}
+  });
+}
+
+/* ── BCR CALCULATOR ── */
+function fmt(n){return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':n>=1000?'$'+Math.round(n).toLocaleString():'$'+n}
+function calcBCR(){
+  const hp=parseInt(document.getElementById('home-price').value)||400000;
+  const dp=parseInt(document.getElementById('down-pct').value)||20;
+  const alloc=parseInt(document.getElementById('btc-alloc').value)||50;
+  const btcP=parseInt(document.getElementById('btc-price').value)||95000;
+  document.getElementById('hp-disp').textContent=hp>=1000000?'$'+(hp/1000000).toFixed(1)+'M':hp>=1000?'$'+(hp/1000).toFixed(0)+'K':'$'+hp;
+  document.getElementById('dp-disp').textContent=dp+'%';
+  document.getElementById('btc-alloc-disp').textContent=alloc+'%';
+  document.getElementById('btc-price-disp').textContent=btcP>=1000?'$'+(btcP/1000).toFixed(0)+'K':'$'+btcP;
+  const downUSD=Math.round(hp*(dp/100));
+  const btcUSD=Math.round(downUSD*(alloc/100));
+  const cashSeller=downUSD-btcUSD;
+  const btcAmt=btcUSD/btcP;
+  const loanAmt=hp-downUSD;
+  const bcr=loanAmt>0?(btcUSD/loanAmt*100):0;
+  document.getElementById('cash-seller').textContent=fmt(cashSeller);
+  document.getElementById('btc-usd').textContent=fmt(btcUSD);
+  document.getElementById('btc-amount').textContent=btcAmt.toFixed(4)+' ₿';
+  document.getElementById('loan-amt').textContent=fmt(loanAmt);
+  document.getElementById('bcr-score').textContent=bcr.toFixed(1)+'%';
+}
+calcBCR();
+
+/* ── QUESTIONNAIRE ── */
+let currentQPage=1;
+function setQLevel(level,btn){
+  document.querySelectorAll('.q-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('q-level-1').style.display=level===1?'block':'none';
+  document.getElementById('q-level-2').style.display=level===2?'block':'none';
+}
+function qNext(page){
+  document.getElementById('qpage-'+page).style.display='none';
+  document.getElementById('qpage-'+(page+1)).style.display='block';
+  currentQPage=page+1;
+  document.getElementById('q-progress-fill').style.width=(((page+1)/3)*100)+'%';
+  window.scrollTo({top:document.getElementById('tab-questionnaire').offsetTop,behavior:'smooth'});
+}
+function qPrev(page){
+  document.getElementById('qpage-'+page).style.display='none';
+  document.getElementById('qpage-'+(page-1)).style.display='block';
+  currentQPage=page-1;
+  document.getElementById('q-progress-fill').style.width=(((page-1)/3)*100)+'%';
+}
+function submitQuestionnaire(){
+  document.querySelectorAll('.q-page').forEach(p=>p.style.display='none');
+  document.getElementById('q-level-2').style.display='none';
+  document.getElementById('q-progress-fill').style.width='100%';
+  const s=document.getElementById('q-success');
+  s.style.display='block';
+  window.scrollTo({top:s.offsetTop-100,behavior:'smooth'});
+}
+
+/* ── COALITION / SUPPORT FORM ── */
+function toggleLogoUpload(val){
+  document.getElementById('logo-upload-section').style.display=val==='public'?'block':'none';
+}
+function supportStep1(){
+  const n=document.getElementById('s-name').value.trim();
+  const e=document.getElementById('s-email').value.trim();
+  const r=document.getElementById('s-role').value;
+  const v=document.getElementById('s-visibility').value;
+  if(!n||!e||!r||!v){document.getElementById('s-error-1').style.display='block';return;}
+  document.getElementById('s-error-1').style.display='none';
+  goToStep(2);
+}
+function supportStep2(){
+  const h=document.getElementById('s-help').value;
+  if(!h){document.getElementById('s-error-2').style.display='block';return;}
+  document.getElementById('s-error-2').style.display='none';
+  goToStep(3);
+}
+function supportBack(step){goToStep(step-1);}
+function goToStep(n){
+  document.querySelectorAll('.step-form').forEach(f=>f.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  [1,2,3].forEach(i=>{
+    const d=document.getElementById('sdot-'+i);
+    d.className='step-dot '+(i<n?'done':i===n?'active':'inactive');
+  });
+}
+function submitSupport(){
+  if(!document.getElementById('s-agree-sign').checked){document.getElementById('s-error-3').style.display='block';return;}
+  document.getElementById('s-error-3').style.display='none';
+  const vis=document.getElementById('s-visibility').value;
+  const total=document.getElementById('count-total');
+  const pub=document.getElementById('count-public');
+  total.textContent=parseInt(total.textContent)+1;
+  if(vis==='public'){pub.textContent=parseInt(pub.textContent)+1;}
+  if(vis==='public'){
+    const name=document.getElementById('s-name').value;
+    const role=document.getElementById('s-role').value;
+    const msg=document.getElementById('s-message').value;
+    const card=document.createElement('div');
+    card.className='supporter-card';
+    card.innerHTML=`<div class="supporter-name">${sanitize(name)}</div><div class="supporter-role">${sanitize(role)}</div>${msg?`<div class="supporter-msg">"${sanitize(msg)}"</div>`:''}<span class="supporter-badge badge-public">Public</span>`;
+    document.getElementById('supporters-list').prepend(card);
+  }
+  document.querySelectorAll('.step-form').forEach(f=>f.classList.remove('active'));
+  document.getElementById('share-box').style.display='block';
+}
+function sanitize(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function copyShareLink(){
+  navigator.clipboard.writeText(document.getElementById('share-link-val').value).then(()=>{
+    const c=document.getElementById('copy-confirm');c.style.display='block';
+    setTimeout(()=>c.style.display='none',2500);
+  });
+}
+function previewLogo(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const img=document.getElementById('upload-preview');img.src=e.target.result;img.style.display='block';};
+  reader.readAsDataURL(file);
+}
+</script>
 </body>
 </html>
