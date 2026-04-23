@@ -503,7 +503,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
         <h1>The Mortgage System Needs a <em>Shock Absorber.</em><br>Bitcoin Is It.</h1>
         <p class="hero-sub">Akkume is proposing a borrower-funded, restricted Bitcoin reserve layer—embedded at origination as first-loss protection before lenders, guarantees, or taxpayers absorb losses.</p>
         <div class="hero-btns">
-          <a href="#" class="btn-primary" onclick="navigate('proposal')">Support the Pilot</a>
+          <a href="#" class="btn-primary" onclick="navigate('proposal');setTimeout(()=>{document.getElementById('coalition-form').scrollIntoView({behavior:'smooth'})},300)">Support the Pilot</a>
           <a href="#" class="btn-outline" onclick="navigate('briefing')">Read the Briefing</a>
         </div>
         <div class="hero-stats">
@@ -803,6 +803,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
             <h5>Request a Direct Briefing</h5>
             <p style="margin:.25rem 0 .55rem">For FHFA staff and senior stakeholders</p>
             <a href="mailto:info@akkume.com">info@akkume.com</a>
+          <!-- ENDORSEMENTS BLOCK -->
+          <div style="margin-top:1.25rem">
+            <h5 style="font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.65rem;font-weight:700">Endorsements</h5>
+            <div id="endorsements-list" style="display:flex;flex-direction:column;gap:.75rem">
+              <div style="background:var(--cream);border-radius:8px;padding:.85rem;border:1px solid var(--border)">
+                <p style="font-size:.82rem;color:var(--text);font-style:italic;line-height:1.55;margin-bottom:.35rem">"The BCR™ framework addresses a structural gap that has existed in mortgage credit enhancement for decades."</p>
+                <div style="font-size:.75rem;font-weight:700;color:var(--navy)">Industry Contact</div>
+                <div style="font-size:.72rem;color:var(--muted)">Housing Finance — Pending attribution</div>
+              </div>
+            </div>
+            <div style="margin-top:.65rem;font-size:.75rem;color:var(--muted);font-style:italic">Named endorsements added as received. Contact info@akkume.com to add yours.</div>
+          </div>
           </div>
         </div>
       </div>
@@ -952,7 +964,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
       <div class="bcr-calc">
         <div class="bcr-calc-header">
           <div class="bcr-calc-title">BCR™ — Bitcoin Coverage Ratio Calculator</div>
-          <div class="bcr-calc-sub">Model the reserve buffer for a Home&amp;HODL™ loan scenario. BCR™ = BTC Reserve Value ÷ Loan Exposure.</div>
+          <div class="bcr-calc-sub">Model the reserve buffer for a Q-BR™ (Qualified Bitcoin Reserve) loan scenario. BCR™ = BTC Reserve Value ÷ Loan Exposure.</div>
         </div>
         <div class="calc-grid">
           <div class="calc-inputs">
@@ -1005,10 +1017,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
       </div>
 
       <div class="supporters-grid" id="supporters-list">
-        <div class="supporter-card"><div class="supporter-name">James Whitmore</div><div class="supporter-role">Lender · Community Bank</div><div class="supporter-msg">"A first-loss buffer that doesn't change underwriting is exactly what the market needs."</div><span class="supporter-badge badge-public">Public</span></div>
-        <div class="supporter-card"><div class="supporter-name">Anonymous</div><div class="supporter-role">Investor · Asset Manager</div><div class="supporter-msg">Backs the pilot on policy merits.</div><span class="supporter-badge badge-private">Private</span></div>
-        <div class="supporter-card"><div class="supporter-name">Elena Vasquez</div><div class="supporter-role">Policy Advocate · Housing Finance</div><div class="supporter-msg">"This could be the modernization moment housing finance needs."</div><span class="supporter-badge badge-public">Public</span></div>
-        <div class="supporter-card"><div class="supporter-name">Anonymous</div><div class="supporter-role">Servicer</div><div class="supporter-msg">Supports expanded pilot research.</div><span class="supporter-badge badge-private">Private</span></div>
+        <!-- Real supporter cards load here from Supabase via /api/supporters-count -->
+        <div id="supporters-loading" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem">
+          Loading supporters…
+        </div>
+      </div>
+      <!-- LOGO GALLERY -->
+      <div id="logo-gallery" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:2rem;min-height:40px">
+        <!-- Supporter logos appear here when uploaded -->
       </div>
 
       <!-- SIGN FORM — with visibility dropdown added -->
@@ -1330,15 +1346,156 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
         </div>
       </div>
 
-      <div id="dr-access" class="access-banner" style="margin-top:0;margin-bottom:2rem">
-        <h4>Access the Full Data Room</h4>
-        <p>Member and restricted documents are available to verified industry participants, institutional contacts, and pilot partners.</p>
-        <div class="access-tiers">
-          <div class="access-tier"><div class="access-tier-name">Open</div><div class="access-tier-price">Free</div><div class="access-tier-desc">FRED data, public methodology, briefings</div></div>
-          <div class="access-tier" style="border-color:rgba(232,137,26,.3)"><div class="access-tier-name">Member</div><div class="access-tier-price" style="font-size:1.2rem">Contact Us</div><div class="access-tier-desc">Analytics reports, MISMO mapping, DACI details</div></div>
-          <div class="access-tier" style="border-color:rgba(192,57,43,.3)"><div class="access-tier-name">Restricted</div><div class="access-tier-price" style="font-size:1.2rem">Vetted Partners</div><div class="access-tier-desc">Pilot model data, CRT analysis, loan tapes</div></div>
+      <!-- PITCH PHRASE LIST -->
+      <div id="dr-access" style="margin-bottom:2rem">
+        <div class="section-tag">The One-Line Pitch — By Stakeholder</div>
+        <h3 style="font-family:var(--font-serif);font-size:1.4rem;color:var(--navy);margin-bottom:1.25rem">Why Akkume — In One Sentence</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:2rem">
+          <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.45rem">For Pulte / FHFA</div>
+            <p style="font-size:.9rem;color:var(--white);line-height:1.6;font-style:italic">"Expand GSE volume and cut credit losses simultaneously — no taxpayer exposure."</p>
+          </div>
+          <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.45rem">For Lenders</div>
+            <p style="font-size:.9rem;color:var(--white);line-height:1.6;font-style:italic">"Access the wealthiest underserved borrower segment in America at better risk-adjusted returns than conventional high-LTV."</p>
+          </div>
+          <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.45rem">For PMI Companies</div>
+            <p style="font-size:.9rem;color:var(--white);line-height:1.6;font-style:italic">"Wrap the Bitcoin reserve and collect fees on a new asset class, or watch it replace you."</p>
+          </div>
+          <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.45rem">For BPI / Policy Ecosystem</div>
+            <p style="font-size:.9rem;color:var(--white);line-height:1.6;font-style:italic">"This is the first mortgage product where Bitcoin's volatility is a feature, not a risk."</p>
+          </div>
         </div>
-        <button class="btn-primary" onclick="alert('Contact info@akkume.com to request data room access.')">Request Access</button>
+
+        <!-- MAKE MONEY BY STAKEHOLDER -->
+        <div class="section-tag">Q-BR Revenue Model</div>
+        <h3 style="font-family:var(--font-serif);font-size:1.4rem;color:var(--navy);margin-bottom:1rem">Make Money by Stakeholder</h3>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem">
+          <!-- GSEs -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--gold)">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.5rem">Fannie Mae / Freddie Mac</div>
+            <div style="font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:.9rem">4 Revenue Streams</div>
+            <div style="display:flex;flex-direction:column;gap:.65rem">
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--gold);font-weight:700">1.</span><strong>Credit Loss Reduction</strong> — BTC reserve absorbs first-loss before GSE exposure. Lower expected loss = lower capital requirements = higher ROE.</div>
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--gold);font-weight:700">2.</span><strong>Higher G-Fee Income on Expanded Volume</strong> — Accept higher nominal LTV loans that were previously ineligible. More volume at same g-fee spread = more revenue.</div>
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--gold);font-weight:700">3.</span><strong>BTC Upside Participation</strong> — Negotiated participation in Bitcoin reserve appreciation creates a new non-interest revenue stream.</div>
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--gold);font-weight:700">4.</span><strong>Conservatorship Exit Narrative</strong> — A pilot that lowers default rates and expands homeownership is a legacy-defining policy win. Political capital converts to financial autonomy.</div>
+            </div>
+          </div>
+
+          <!-- Lenders -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--navy)">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);margin-bottom:.5rem">Lenders / Banks / IMBs</div>
+            <div style="font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:.9rem">4 Revenue Streams</div>
+            <div style="display:flex;flex-direction:column;gap:.65rem">
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--navy);font-weight:700">1.</span><strong>Coupon Concession Offset by Volume</strong> — Lower coupon is offset by access to Bitcoin-holding borrowers: high-credit-quality, underserved, better risk-adjusted return.</div>
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--navy);font-weight:700">2.</span><strong>Higher MSR Value</strong> — Q-BR loans have lower prepayment risk and lower default risk. Servicing on these loans is worth more.</div>
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--navy);font-weight:700">3.</span><strong>New Origination Market</strong> — Every Bitcoin holder who couldn't buy without liquidating BTC (and paying capital gains) is now a borrower. First movers capture the volume.</div>
+              <div style="font-size:.84rem;color:var(--text);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;color:var(--navy);font-weight:700">4.</span><strong>Cross-Sell Premium</strong> — A Q-BR borrower is a Bitcoin-holding homeowner: a premium wealth management prospect for deposits, investments, and future refis.</div>
+            </div>
+          </div>
+
+          <!-- PMI -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--green-safe);grid-column:1/-1">
+            <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-safe);margin-bottom:.5rem">PMI Companies</div>
+            <div style="font-weight:700;font-size:1rem;color:var(--navy);margin-bottom:.75rem">Disruption Risk vs. Enrichment Opportunity</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div style="background:#FDEDED;border-radius:8px;padding:1rem">
+                <div style="font-size:.78rem;font-weight:700;color:var(--red-alert);margin-bottom:.35rem">⚠ Disruption Risk</div>
+                <p style="font-size:.83rem;color:var(--text);line-height:1.6">If Bitcoin replaces PMI as the credit enhancement mechanism, PMI companies lose premium revenue on high-LTV loans.</p>
+              </div>
+              <div style="background:#E8F5EB;border-radius:8px;padding:1rem">
+                <div style="font-size:.78rem;font-weight:700;color:var(--green-safe);margin-bottom:.35rem">✓ Enrichment Opportunity</div>
+                <p style="font-size:.83rem;color:var(--text);line-height:1.6">If PMI companies become the custodian or administrator of the Bitcoin reserve buffer — wrapping the BTC reserve with an insurance product — they become essential infrastructure. Charge an administration/wrap fee on billions in BTC reserves. New product line, not a threat.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCESS TIERS - REDESIGNED -->
+        <div class="section-tag">Data Room Access</div>
+        <h3 style="font-family:var(--font-serif);font-size:1.4rem;color:var(--navy);margin-bottom:.5rem">Access the Full Data Room</h3>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:1.5rem">Three tiers. BCR and GSE savings data is the hook — give it away. Everything else earns access.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+          <!-- FREE TIER -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--gold)">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.4rem">Free</div>
+            <div style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);margin-bottom:.25rem">Public Credibility Layer</div>
+            <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;line-height:1.5">Feels like Bloomberg terminal data, not a policy brief. Give it away — BCR is the hook.</p>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>BCR™ (Bitcoin Coverage Ratio) definition — public-facing DACI metric</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>GSE credit loss savings data — "Bitcoin reserve buffers reduce GSE credit losses by an estimated 28% on enhanced-LTV loans"</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>Executive summary of the Akkume concept (1-pager, no methodology)</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>"Why Bitcoin + Mortgages" thought leadership piece</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>Problem framing: affordability crisis, GSE conservatorship opportunity</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>Media / press mentions and regulatory milestones</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>Pitch phrase list by stakeholder</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--gold)">✓</span>Housing stress dashboard (FRED/MBA data)</div>
+            </div>
+          </div>
+
+          <!-- MEMBER TIER -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--navy)">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);margin-bottom:.4rem">Member</div>
+            <div style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);margin-bottom:.25rem">Lender Economics</div>
+            <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;line-height:1.5">What an IMB CFO or GSE risk officer would pay for. The actual numbers.</p>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>Lender economics model — coupon concession vs. origination volume gain vs. MSR quality improvement</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>ABCS — Alternative Bitcoin Credit Score methodology</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>Loan tape model — full field definitions and integration guide</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>Implementation and institution guide</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>Illustrative RMBS / CRT Risk Table — Q-BR BTC Reserve Buffer</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>Make Money by Stakeholder — full revenue model</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--navy)">✓</span>MISMO standards mapping</div>
+            </div>
+          </div>
+
+          <!-- RESTRICTED TIER -->
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border-top:4px solid var(--red-alert)">
+            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red-alert);margin-bottom:.4rem">Restricted</div>
+            <div style="font-family:var(--font-serif);font-size:1.3rem;color:var(--navy);margin-bottom:.25rem">Deal Structure</div>
+            <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;line-height:1.5">What a lender needs to commit capital or a GSE needs to authorize a pilot.</p>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--red-alert)">✓</span>Underwriting model outline</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--red-alert)">✓</span>GSE pilot term sheet</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--red-alert)">✓</span>Deal structure — full lender commitment package</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--red-alert)">✓</span>GSE pilot modeling data — $150M cohort design</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--red-alert)">✓</span>CRT spread impact model — full tranche analysis</div>
+              <div style="font-size:.8rem;color:var(--text);padding-left:.9rem;position:relative"><span style="position:absolute;left:0;color:var(--red-alert)">✓</span>Custodian eligibility framework</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:.9rem;flex-wrap:wrap;margin-top:.5rem">
+          <button class="btn-primary" onclick="document.getElementById('access-request-form').style.display='block';document.getElementById('access-request-form').scrollIntoView({behavior:'smooth'})">Request Member Access →</button>
+          <button class="btn-outline" style="color:var(--navy);border-color:var(--border)" onclick="document.getElementById('access-request-form').style.display='block';document.getElementById('access-request-form').scrollIntoView({behavior:'smooth'})">Request Restricted Access →</button>
+        </div>
+
+        <!-- ACCESS REQUEST FORM -->
+        <div id="access-request-form" style="display:none;background:var(--navy);border-radius:var(--radius-lg);padding:2rem;margin-top:1.5rem;color:var(--white)">
+          <div style="font-family:var(--font-serif);font-size:1.25rem;margin-bottom:.35rem">Request Data Room Access</div>
+          <p style="font-size:.84rem;color:rgba(255,255,255,.55);margin-bottom:1.25rem">Tell us who you are and which tier you need. We'll respond within 24 hours.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.7rem">
+            <div style="display:flex;flex-direction:column;gap:.3rem"><label style="font-size:.73rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Name</label><input type="text" id="ar-name" placeholder="Your full name" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.62rem .88rem;color:var(--white);font-family:var(--font-sans);font-size:.88rem;outline:none"></div>
+            <div style="display:flex;flex-direction:column;gap:.3rem"><label style="font-size:.73rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Email</label><input type="email" id="ar-email" placeholder="your@institution.com" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.62rem .88rem;color:var(--white);font-family:var(--font-sans);font-size:.88rem;outline:none"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.7rem">
+            <div style="display:flex;flex-direction:column;gap:.3rem"><label style="font-size:.73rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Organization</label><input type="text" id="ar-org" placeholder="Company / Institution" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.62rem .88rem;color:var(--white);font-family:var(--font-sans);font-size:.88rem;outline:none"></div>
+            <div style="display:flex;flex-direction:column;gap:.3rem"><label style="font-size:.73rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Access Level Requested</label>
+              <select id="ar-tier" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.62rem .88rem;color:var(--white);font-family:var(--font-sans);font-size:.88rem;outline:none">
+                <option value="member">Member — Lender Economics</option>
+                <option value="restricted">Restricted — Deal Structure</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.3rem;margin-bottom:1rem"><label style="font-size:.73rem;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.04em">Why you need access</label><textarea id="ar-reason" placeholder="Brief description of your role and intended use…" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.62rem .88rem;color:var(--white);font-family:var(--font-sans);font-size:.88rem;outline:none;min-height:70px;resize:vertical;width:100%"></textarea></div>
+          <button class="btn-primary" onclick="submitAccessRequest()">Submit Request</button>
+          <div id="ar-success" style="display:none;background:rgba(30,107,60,.2);border:1px solid rgba(30,107,60,.3);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;font-size:.86rem;color:#5DD68B">✓ Request sent. We'll be in touch within 24 hours at info@akkume.com</div>
+        </div>
       </div>
 
             <!-- BITCOIN ENHANCED RMBS SECTION -->
@@ -1660,60 +1817,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
           </div>
         </div>
 
-        <!-- 5 PUNCHY IMPROVEMENTS -->
-        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow);margin-bottom:2rem">
-          <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">5 Ways to Make This Hit Harder</div>
-          <div style="display:flex;flex-direction:column;gap:1.1rem">
-
-            <div style="display:flex;gap:1rem;align-items:flex-start">
-              <div style="background:var(--navy);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">1</div>
-              <div>
-                <div style="font-weight:700;font-size:.93rem;color:var(--navy);margin-bottom:.2rem">Lead with One Sentence — Not a Concept</div>
-                <p style="font-size:.84rem;color:var(--muted);line-height:1.6">Every executive page should open with: <strong style="color:var(--navy)">"The U.S. mortgage system has no first-loss buffer. Akkume adds one—funded by the borrower, held in Bitcoin, active before the taxpayer is ever exposed."</strong> Everything else is proof of that sentence. Print it on the briefing cover.</p>
-              </div>
-            </div>
-
-            <div style="display:flex;gap:1rem;align-items:flex-start">
-              <div style="background:var(--navy);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">2</div>
-              <div>
-                <div style="font-weight:700;font-size:.93rem;color:var(--navy);margin-bottom:.2rem">Frame the Choice as "Before vs. After" — Not "Yes vs. No"</div>
-                <p style="font-size:.84rem;color:var(--muted);line-height:1.6">The question isn't whether to add a Bitcoin reserve layer. The question is whether you add it <strong style="color:var(--navy)">before the next default wave</strong> (cost: $150M pilot, 90 days) or <strong style="color:var(--red-alert)">after</strong> (cost: GSE bailout, Congressional hearings, systemic contagion). Put both scenarios on the same slide. Let executives choose their timeline.</p>
-              </div>
-            </div>
-
-            <div style="display:flex;gap:1rem;align-items:flex-start">
-              <div style="background:var(--navy);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">3</div>
-              <div>
-                <div style="font-weight:700;font-size:.93rem;color:var(--navy);margin-bottom:.2rem">Add a Live Countdown to May 2026 on the Home Page</div>
-                <p style="font-size:.84rem;color:var(--muted);line-height:1.6">A visible countdown clock — "Pilot Launch Window: 39 days" — creates urgency without drama. Every visit to akkume.com is a reminder that the window is closing. Pair it with a supporter count that ticks up in real time. Both are cheap to build and create permanent pressure on the decision timeline.</p>
-                <div id="countdown-demo" style="margin-top:.6rem;background:var(--navy);border-radius:8px;padding:.75rem 1.1rem;display:inline-flex;align-items:center;gap:1rem;flex-wrap:wrap">
-                  <span style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);font-weight:700">Pilot Launch Window</span>
-                  <span style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--gold)" id="countdown-val">—</span>
-                  <span style="font-size:.78rem;color:rgba(255,255,255,.5)">days remaining</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="display:flex;gap:1rem;align-items:flex-start">
-              <div style="background:var(--navy);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">4</div>
-              <div>
-                <div style="font-weight:700;font-size:.93rem;color:var(--navy);margin-bottom:.2rem">Add an "Endorsements" Block with Named Stakeholders</div>
-                <p style="font-size:.84rem;color:var(--muted);line-height:1.6">Social proof from named lenders, MBS investors, MISMO staff, or trade association leaders converts skeptics faster than data. Even two or three named quotes — "We have reviewed the BCR™ methodology and believe the first-loss structure is structurally sound" — from credible institutional contacts changes the room dynamic. Prioritize getting one Pulte Family Enterprise name, one MBA/NAMB name, and one capital markets name publicly on record before the briefing.</p>
-              </div>
-            </div>
-
-            <div style="display:flex;gap:1rem;align-items:flex-start">
-              <div style="background:var(--navy);color:var(--gold);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">5</div>
-              <div>
-                <div style="font-weight:700;font-size:.93rem;color:var(--navy);margin-bottom:.2rem">Create a Press-Ready One-Pager with a Single CTA</div>
-                <p style="font-size:.84rem;color:var(--muted);line-height:1.6">Build a downloadable one-pager (PDF, linked from every page) that a GSE executive can print and put in front of their credit committee without modification. One page. Headline: <em>"First-Loss Before the Taxpayer: The Case for a Bitcoin Reserve Layer."</em> Three numbers: $150M pilot / 28% loss reduction / $0 Congressional action required. One CTA: info@akkume.com. Keep it under 400 words. This is what travels through organizations — not websites.</p>
-                <button class="btn-primary" style="margin-top:.6rem;font-size:.82rem" onclick="alert('One-pager PDF available upon request — contact info@akkume.com')">Download One-Pager PDF →</button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
+        
         <!-- FINAL CTA -->
         <div style="background:linear-gradient(135deg,var(--navy) 0%,#1a2f52 100%);border-radius:var(--radius-lg);padding:2.5rem;text-align:center;color:var(--white)">
           <div style="font-family:var(--font-serif);font-size:1.75rem;margin-bottom:.6rem;line-height:1.25">The system has a gap. <em style="color:var(--gold)">We have the solution.</em><br>The pilot starts when you say yes.</div>
@@ -1756,6 +1860,25 @@ nav{position:sticky;top:0;z-index:100;background:rgba(11,22,40,.98);backdrop-fil
 </footer>
 
 <script>
+/* ── ACCESS REQUEST ── */
+async function submitAccessRequest(){
+  const name=document.getElementById('ar-name')?.value.trim()||'';
+  const email=document.getElementById('ar-email')?.value.trim()||'';
+  const org=document.getElementById('ar-org')?.value.trim()||'';
+  const tier=document.getElementById('ar-tier')?.value||'';
+  const reason=document.getElementById('ar-reason')?.value.trim()||'';
+  if(!name||!email){alert('Please enter your name and email.');return;}
+  try {
+    await fetch('/api/submit-survey',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({level:2,role:'Data Room Request',email,org,tier,reason,name,type:'access_request'})
+    });
+  } catch(e){console.warn('Access request submit error:',e);}
+  document.getElementById('ar-success').style.display='block';
+  setTimeout(()=>document.getElementById('access-request-form').querySelectorAll('input,textarea').forEach(el=>el.value=''),500);
+}
+
 /* ── COUNTDOWN TIMER ── */
 function updateCountdown(){
   const target=new Date('2026-05-01T00:00:00');
@@ -1927,6 +2050,143 @@ function previewLogo(input){
   reader.onload=e=>{const img=document.getElementById('upload-preview');img.src=e.target.result;img.style.display='block';};
   reader.readAsDataURL(file);
 }
+
+/* ── API WIRING ── */
+async function apiPost(endpoint,data){
+  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  const json=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(json.error||'HTTP '+res.status);
+  return json;
+}
+
+async function loadSupporterCounts(){
+  try{
+    const res=await fetch('/api/supporters-count');
+    if(!res.ok)return;
+    const{counts,cards}=await res.json();
+    const totalEl=document.getElementById('count-total');
+    const pubEl=document.getElementById('count-public');
+    if(totalEl)totalEl.textContent=counts.total_count||0;
+    if(pubEl)pubEl.textContent=counts.public_count||0;
+    const list=document.getElementById('supporters-list');
+    const loading=document.getElementById('supporters-loading');
+    if(loading)loading.style.display='none';
+    if(list&&cards&&cards.length>0){
+      list.innerHTML='';
+      cards.forEach(card=>{
+        const el=document.createElement('div');
+        el.className='supporter-card';
+        el.innerHTML='<div class="supporter-name">'+sanitize(card.name||'')+'</div>'
+          +'<div class="supporter-role">'+sanitize(card.role||'')+(card.company?' · '+sanitize(card.company):'')+'</div>'
+          +(card.message?'<div class="supporter-msg">"'+sanitize(card.message)+'"</div>':'')
+          +'<span class="supporter-badge badge-public">Public</span>';
+        list.appendChild(el);
+        if(card.logo_url){
+          const gallery=document.getElementById('logo-gallery');
+          if(gallery){
+            const img=document.createElement('img');
+            img.src=sanitize(card.logo_url);img.alt=sanitize(card.name||'')+' logo';
+            img.style.cssText='max-height:40px;max-width:120px;object-fit:contain;border-radius:4px;opacity:.85;';
+            gallery.appendChild(img);
+          }
+        }
+      });
+    }else if(list){
+      list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:1.5rem;color:var(--muted);font-size:.86rem">Be the first to publicly support the pilot.</div>';
+    }
+  }catch(err){
+    const loading=document.getElementById('supporters-loading');
+    if(loading)loading.style.display='none';
+  }
+}
+
+async function submitSupport(){
+  if(!document.getElementById('s-agree-sign').checked){document.getElementById('s-error-3').style.display='block';return;}
+  document.getElementById('s-error-3').style.display='none';
+  const btn=document.querySelector('#step-3 .btn-primary');
+  const orig=btn?btn.textContent:'';
+  if(btn){btn.textContent='Submitting…';btn.disabled=true;}
+  try{
+    await apiPost('/api/submit-support',{
+      name:document.getElementById('s-name')?.value||'',
+      email:document.getElementById('s-email')?.value||'',
+      role:document.getElementById('s-role')?.value||'',
+      company:document.getElementById('s-company')?.value||'',
+      visibility:document.getElementById('s-visibility')?.value||'',
+      how_to_help:document.getElementById('s-help')?.value||'',
+      message:document.getElementById('s-message')?.value||'',
+      wants_updates:document.getElementById('s-agree-updates')?.checked||false,
+    });
+    const vis=document.getElementById('s-visibility')?.value;
+    const totalEl=document.getElementById('count-total');
+    const pubEl=document.getElementById('count-public');
+    if(totalEl)totalEl.textContent=parseInt(totalEl.textContent||'0')+1;
+    if(vis==='public'&&pubEl)pubEl.textContent=parseInt(pubEl.textContent||'0')+1;
+    document.querySelectorAll('.step-form').forEach(f=>f.classList.remove('active'));
+    document.getElementById('share-box').style.display='block';
+  }catch(err){
+    const errEl=document.getElementById('s-error-3');
+    if(errEl){errEl.textContent=err.message||'Submission failed.';errEl.style.display='block';}
+    if(btn){btn.textContent=orig;btn.disabled=false;}
+  }
+}
+
+async function submitSignature(){
+  const name=document.getElementById('sig-name')?.value.trim()||'';
+  const email=document.getElementById('sig-email')?.value.trim()||'';
+  const type=document.getElementById('sig-type')?.value||'';
+  const agreed=document.getElementById('sig-agree')?.checked;
+  const err=document.getElementById('sig-error');
+  const suc=document.getElementById('sig-success');
+  if(!name||!email||!type||!agreed){if(err)err.style.display='block';return;}
+  if(err)err.style.display='none';
+  const btn=document.querySelector('#sign-proposal .btn-primary');
+  if(btn){btn.textContent='Submitting…';btn.disabled=true;}
+  try{
+    await apiPost('/api/submit-signature',{name,email,company:document.getElementById('sig-company')?.value||'',signer_type:type,agreed:true});
+    if(suc)suc.style.display='block';
+    if(btn)btn.style.display='none';
+  }catch(e){
+    if(err){err.textContent=e.message||'Submission failed.';err.style.display='block';}
+    if(btn){btn.textContent='Sign Proposal';btn.disabled=false;}
+  }
+}
+
+async function submitQuestionnaire(){
+  const isL2=document.getElementById('q-level-2')?.style.display!=='none';
+  const level=isL2?2:1;
+  const payload={level};
+  if(level===1){
+    payload.role=document.getElementById('q-role')?.value||'';
+    payload.org=document.getElementById('q-org')?.value||'';
+    payload.experience=document.querySelector('[name="q-exp"]:checked')?.value||'';
+    payload.concern_score=parseInt(document.getElementById('q-concern')?.value)||3;
+    payload.segments=[...document.querySelectorAll('[name="q-segment"]:checked')].map(el=>el.value);
+    payload.ce_concern=document.getElementById('q-ce-concern')?.value||'';
+    payload.familiarity=document.querySelector('[name="q-familiarity"]:checked')?.value||'';
+    payload.reaction=document.querySelector('[name="q-reaction"]:checked')?.value||'';
+    payload.conditions=document.getElementById('q-conditions')?.value||'';
+    payload.wants_briefing=document.querySelector('[name="q-briefing"]:checked')?.value||'';
+    payload.email=document.getElementById('q-email')?.value||'';
+  }else{
+    payload.capital_class=document.querySelector('[name="q-capital"]:checked')?.value||'';
+    payload.custodial=document.getElementById('q-custodial')?.value||'';
+    payload.volatility=document.querySelector('[name="q-volatility"]:checked')?.value||'';
+    payload.mismo=document.getElementById('q-mismo')?.value||'';
+    payload.ercf=document.querySelector('[name="q-ercf"]:checked')?.value||'';
+    payload.participate=document.querySelector('[name="q-participate"]:checked')?.value||'';
+    payload.email=document.getElementById('q2-email')?.value||'';
+  }
+  apiPost('/api/submit-survey',payload).catch(e=>console.warn('Survey error:',e.message));
+  document.querySelectorAll('.q-page').forEach(p=>p.style.display='none');
+  if(document.getElementById('q-level-2'))document.getElementById('q-level-2').style.display='none';
+  document.getElementById('q-progress-fill').style.width='100%';
+  const s=document.getElementById('q-success');
+  if(s){s.style.display='block';window.scrollTo({top:s.offsetTop-100,behavior:'smooth'});}
+}
+
+document.addEventListener('DOMContentLoaded',loadSupporterCounts);
+
 </script>
 </body>
 </html>
