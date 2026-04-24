@@ -2,8 +2,8 @@ export const navItems = [
   { href: '/', label: 'Home' },
   { href: '/pilot-proposal', label: 'Pilot Proposal' },
   { href: '/support', label: 'Sign & Support' },
-  { href: '/borrower', label: 'Borrow page' },
-  { href: '/institutions', label: 'Lender / Investor / Servicer / Regulator' },Pilot Proposal
+  { href: '/borrower', label: 'Borrower page' },
+  { href: '/institutions', label: 'Lender / Investor / Servicer / Regulator' },
   { href: '/questionnaire', label: 'Questionnaire' },
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/contact', label: 'Data Room' },
