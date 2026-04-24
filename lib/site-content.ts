@@ -1,17 +1,17 @@
 export const navItems = [
-  { href: '/', label: 'Landing page' },
+  { href: '/', label: 'Home' },
   { href: '/pilot-proposal', label: 'Pilot Proposal' },
-  { href: '/support', label: 'Supporter signup' },
+  { href: '/support', label: 'Sign & Support' },
   { href: '/borrower', label: 'Borrow page' },
-  { href: '/institutions', label: 'Lender / Investor / Servicer / Regulator' },
+  { href: '/institutions', label: 'Lender / Investor / Servicer / Regulator' },Pilot Proposal
   { href: '/questionnaire', label: 'Questionnaire' },
-  { href: '/dashboard', label: 'Akkume-ulate Bitcoin' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/contact', label: 'Data Room' },
 ];
 
 export const landingCopy = {
   eyebrow: 'Reserve Layer • Housing Finance • Pilot Proposal',
-  kicker: 'It’s not too late to Akkume-ulate Bitcoin',
+  kicker: 'Introducing the Bitcoin Reserve Layer',
   title: 'Redirect the Largest Credit System in the World, to Bitcoin',
   subtitle:
     'Turn every mortgage into a first-loss Bitcoin reserve—strengthening credit, expanding access, and reducing taxpayer risk.',
