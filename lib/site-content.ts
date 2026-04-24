@@ -1,4 +1,5 @@
-export const navItems = [
+export const navItems = 
+  [
   { href: '/', label: 'Home' },
   { href: '/pilot-proposal', label: 'Pilot Proposal' },
   { href: '/support', label: 'Sign & Support' },
